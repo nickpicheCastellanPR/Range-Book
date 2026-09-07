@@ -1,0 +1,102 @@
+import { useMemo, useState } from "react";
+import { LIES, SWING_LENGTHS, type AppData, type Lie } from "../types";
+import { getRecommendations } from "../lib/recommend";
+
+export function RangefinderScreen({ data }: { data: AppData }) {
+  const [distance, setDistance] = useState("");
+  const [tempF, setTempF] = useState("");
+  const [lie, setLie] = useState<Lie>("fairway");
+
+  const distanceNum = parseFloat(distance);
+  const tempNum = tempF.trim() === "" ? undefined : parseFloat(tempF);
+
+  const recommendations = useMemo(() => {
+    if (!Number.isFinite(distanceNum)) return [];
+    return getRecommendations(data, { distance: distanceNum, tempF: tempNum, lie }).slice(0, 8);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [distanceNum, tempNum, lie, data]);
+
+  const swingLabel = (key: string) =>
+    SWING_LENGTHS.find((s) => s.key === key)?.label ?? key;
+
+  return (
+    <div className="stack">
+      <div className="card">
+        <div className="card-title">Shot</div>
+        <div className="stack">
+          <div className="field">
+            <label>Distance to target (yd)</label>
+            <input
+              inputMode="decimal"
+              placeholder="e.g. 152"
+              value={distance}
+              onChange={(e) => setDistance(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label>Temp (°F, optional)</label>
+            <input
+              inputMode="decimal"
+              placeholder="e.g. 58"
+              value={tempF}
+              onChange={(e) => setTempF(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label>Lie</label>
+            <div className="pill-group">
+              {LIES.map((l) => (
+                <button
+                  key={l.key}
+                  className={`pill${lie === l.key ? " active" : ""}`}
+                  onClick={() => setLie(l.key)}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {!Number.isFinite(distanceNum) && (
+        <p className="text-faint" style={{ textAlign: "center", marginTop: 8 }}>
+          Enter a distance to see club options.
+        </p>
+      )}
+
+      {Number.isFinite(distanceNum) && recommendations.length === 0 && (
+        <div className="empty-state">
+          <div className="icon">📭</div>
+          <p>No logged sessions yet — log a range session first.</p>
+        </div>
+      )}
+
+      {recommendations.map((rec, i) => (
+        <div className="card rec-card" key={`${rec.clubId}-${rec.swingLength}`}>
+          <div className={`rec-rank${i === 0 ? " best" : ""}`}>{i + 1}</div>
+          <div style={{ flex: 1 }}>
+            <div className="row">
+              <span style={{ fontWeight: 700 }}>{rec.clubName}</span>
+              <span className="badge badge-muted">{swingLabel(rec.swingLength)}</span>
+            </div>
+            <div className="row" style={{ marginTop: 6 }}>
+              <span className="text-faint">
+                Carry {rec.adjustedCarry} · Total {rec.adjustedTotal} · Roll {rec.adjustedRollout}
+              </span>
+            </div>
+            <div className="text-faint" style={{ marginTop: 2 }}>
+              {rec.diffFromTarget === 0
+                ? "Exact fit"
+                : rec.diffFromTarget > 0
+                  ? `${rec.diffFromTarget} yd long`
+                  : `${Math.abs(rec.diffFromTarget)} yd short`}
+              {rec.baseStats.avgDispersion !== 0 &&
+                ` · tends ${Math.abs(rec.baseStats.avgDispersion)} yd ${rec.baseStats.avgDispersion < 0 ? "left" : "right"}`}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
