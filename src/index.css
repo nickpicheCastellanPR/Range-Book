@@ -186,6 +186,7 @@ input:focus, select:focus {
 .btn-danger {
   background: transparent;
   color: var(--danger);
+  border: 1px solid var(--danger-dim);
 }
 
 .btn-ghost {

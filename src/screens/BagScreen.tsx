@@ -54,6 +54,20 @@ export function BagScreen({
     });
   }
 
+  function deleteClub(club: Club) {
+    const sessionCount = data.sessions.filter((s) => s.clubId === club.id).length;
+    const warning =
+      sessionCount > 0
+        ? `Delete ${club.name} and its ${sessionCount} logged session${sessionCount === 1 ? "" : "s"}? This can't be undone.`
+        : `Delete ${club.name}? This can't be undone.`;
+    if (!window.confirm(warning)) return;
+    onUpdate({
+      ...data,
+      clubs: data.clubs.filter((c) => c.id !== club.id),
+      sessions: data.sessions.filter((s) => s.clubId !== club.id),
+    });
+  }
+
   function move(club: Club, dir: -1 | 1) {
     const sorted = [...active].sort((a, b) => a.order - b.order);
     const idx = sorted.findIndex((c) => c.id === club.id);
@@ -138,6 +152,9 @@ export function BagScreen({
             <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => toggleActive(club)}>
               Retire
             </button>
+            <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => deleteClub(club)}>
+              Delete
+            </button>
           </div>
         </div>
       ))}
@@ -165,6 +182,9 @@ export function BagScreen({
                 </button>
                 <button className="btn btn-ghost" onClick={() => toggleActive(club)}>
                   Restore
+                </button>
+                <button className="btn btn-danger" onClick={() => deleteClub(club)}>
+                  Delete
                 </button>
               </div>
             </div>
