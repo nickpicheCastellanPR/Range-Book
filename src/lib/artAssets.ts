@@ -1,6 +1,7 @@
 const base = import.meta.env.BASE_URL;
 
 export const HEADER_MARK = `${base}icons/header-mark.png`;
+export const HERO_ART = `${base}art/hero.jpg`;
 
 export const PAGE_ART = {
   bag: `${base}art/tentacle-driver.jpg`,

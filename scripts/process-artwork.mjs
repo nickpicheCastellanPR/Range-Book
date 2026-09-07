@@ -1,6 +1,5 @@
-// One-off processor for the user-supplied kraken artwork: builds the full
-// icon set from the single logo, and slices the 2x2 grid into 4 separate
-// decorative art assets. Run with: node scripts/process-artwork.mjs
+// Processes the user-supplied kraken artwork (art-source/) into the app's
+// icon set and decorative page art. Run with: node scripts/process-artwork.mjs
 import sharp from "sharp";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
@@ -9,44 +8,54 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
 const iconsDir = path.join(root, "public", "icons");
 const artDir = path.join(root, "public", "art");
-const logo = path.join(root, "art-source", "kraken-logo.jpg");
-const grid = path.join(root, "art-source", "kraken-clubs-grid.jpg");
+const src = (name) => path.join(root, "art-source", name);
 
-const MASKABLE_BG = "#132534";
+// square.png: full-bleed rectangle, no baked-in rounded-corner frame — this
+// is what an app icon source should be, letting the OS apply its own single
+// rounding instead of doubling up with a pre-rounded source.
+const icon = src("kraken-square.png");
+const hero = src("kraken-hero.png");
+const driver = src("kraken-driver.png");
+const trio = src("kraken-trio.png");
+const texture = src("kraken-texture.png");
+const grid = src("kraken-clubs-grid.jpg"); // still used for the 2 pieces without a dedicated export
 
 async function main() {
-  // --- App icon set from the main logo ---
   const pngOpts = { palette: true, quality: 90, effort: 8 };
-  await sharp(logo).resize(512, 512).png(pngOpts).toFile(path.join(iconsDir, "icon-512.png"));
-  await sharp(logo).resize(192, 192).png(pngOpts).toFile(path.join(iconsDir, "icon-192.png"));
-  await sharp(logo).resize(180, 180).flatten({ background: MASKABLE_BG }).png(pngOpts).toFile(path.join(root, "public", "apple-touch-icon.png"));
-  await sharp(logo).resize(64, 64).png(pngOpts).toFile(path.join(root, "public", "favicon.png"));
 
-  // maskable: the source is already a finished, self-contained icon design
-  // (its own rounded frame baked in) — adding another padded background
-  // behind it just doubles the frame, so reuse the plain resize as-is.
-  await sharp(logo).resize(512, 512).png(pngOpts).toFile(path.join(iconsDir, "icon-maskable-512.png"));
+  // --- App icon set ---
+  await sharp(icon).resize(512, 512).png(pngOpts).toFile(path.join(iconsDir, "icon-512.png"));
+  await sharp(icon).resize(192, 192).png(pngOpts).toFile(path.join(iconsDir, "icon-192.png"));
+  await sharp(icon).resize(180, 180).png(pngOpts).toFile(path.join(root, "public", "apple-touch-icon.png"));
+  await sharp(icon).resize(64, 64).png(pngOpts).toFile(path.join(root, "public", "favicon.png"));
+  // maskable: pad with a crop of the matching crack texture (not a flat
+  // color) so Android's more aggressive circular mask has safe margin to
+  // crop into without a visible seam where the padding meets the art
+  const maskableSize = 512;
+  const contentSize = Math.round(maskableSize * 0.75);
+  const [contentBuf, paddingBuf] = await Promise.all([
+    sharp(icon).resize(contentSize, contentSize).toBuffer(),
+    sharp(texture).resize(maskableSize, maskableSize, { fit: "cover" }).toBuffer(),
+  ]);
+  await sharp(paddingBuf)
+    .composite([{ input: contentBuf, gravity: "center" }])
+    .png(pngOpts)
+    .toFile(path.join(iconsDir, "icon-maskable-512.png"));
+  await sharp(icon).resize(128, 128).png(pngOpts).toFile(path.join(iconsDir, "header-mark.png"));
 
-  // in-app header mark — small retina asset
-  await sharp(logo).resize(128, 128).png(pngOpts).toFile(path.join(iconsDir, "header-mark.png"));
+  // --- Hero image (About screen), kept as a clean rounded card, not masked ---
+  await sharp(hero).resize(700, 700, { fit: "inside" }).jpeg({ quality: 88 }).toFile(path.join(artDir, "hero.jpg"));
 
-  // --- Slice the 2x2 grid into 4 decorative pieces ---
-  // JPEG, not PNG: this is dense/textured illustration, not flat vector
-  // art, so PNG compresses it poorly (500KB+ vs ~100KB). The CSS
-  // mask-image fade used to blend these into each page works on any
-  // raster format, no transparency needed.
-  const quads = [
-    { name: "tentacle-driver.jpg", left: 0, top: 0 },
-    { name: "tentacle-irons-crossed.jpg", left: 512, top: 0 },
-    { name: "tentacle-irons-tangled.jpg", left: 0, top: 512 },
-    { name: "tentacle-trio-ball.jpg", left: 512, top: 512 },
-  ];
-  for (const q of quads) {
-    await sharp(grid)
-      .extract({ left: q.left, top: q.top, width: 512, height: 512 })
-      .jpeg({ quality: 85 })
-      .toFile(path.join(artDir, q.name));
-  }
+  // --- Page background art, one per main tab (square crop — the display
+  // frame is square, and these sources vary in aspect ratio) ---
+  const jpegOpts = { quality: 85 };
+  await sharp(driver).resize(640, 640, { fit: "cover", position: "top" }).jpeg(jpegOpts).toFile(path.join(artDir, "tentacle-driver.jpg"));
+  await sharp(trio).resize(640, 640, { fit: "cover" }).jpeg(jpegOpts).toFile(path.join(artDir, "tentacle-trio-ball.jpg"));
+
+  // the other two tabs still use pieces sliced from the original 2x2 grid —
+  // no dedicated export was supplied for these
+  await sharp(grid).extract({ left: 512, top: 0, width: 512, height: 512 }).jpeg(jpegOpts).toFile(path.join(artDir, "tentacle-irons-crossed.jpg"));
+  await sharp(grid).extract({ left: 0, top: 512, width: 512, height: 512 }).jpeg(jpegOpts).toFile(path.join(artDir, "tentacle-irons-tangled.jpg"));
 
   console.log("Artwork processed.");
 }

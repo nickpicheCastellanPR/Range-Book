@@ -1,4 +1,5 @@
 import { WaveDivider } from "../components/art/WaveDivider";
+import { HERO_ART } from "../lib/artAssets";
 
 export function AboutScreen({ onBack }: { onBack: () => void }) {
   return (
@@ -6,6 +7,12 @@ export function AboutScreen({ onBack }: { onBack: () => void }) {
       <button className="btn btn-ghost" onClick={onBack}>
         ← Back to settings
       </button>
+
+      <img
+        src={HERO_ART}
+        alt=""
+        style={{ width: "100%", borderRadius: "var(--radius)", display: "block" }}
+      />
 
       <h2 style={{ fontSize: 22 }}>About Fathom</h2>
       <WaveDivider />
