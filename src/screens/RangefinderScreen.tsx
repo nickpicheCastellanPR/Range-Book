@@ -38,7 +38,6 @@ export function RangefinderScreen({ data }: { data: AppData }) {
   return (
     <div className="stack">
       <div className="card">
-        <CompassRose size={130} className="compass-watermark" />
         <div className="card-title">Shot</div>
         <div className="stack">
           <div className="field">

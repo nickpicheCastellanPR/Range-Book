@@ -4,6 +4,8 @@ import { loadData, saveData } from "./lib/storage";
 import { BottomNav, type Screen } from "./components/BottomNav";
 import { KrakenMark } from "./components/art/KrakenMark";
 import { WaveDivider } from "./components/art/WaveDivider";
+import { PageArt } from "./components/art/PageArt";
+import { PAGE_ART } from "./lib/artAssets";
 import { BagScreen } from "./screens/BagScreen";
 import { LogSessionScreen } from "./screens/LogSessionScreen";
 import { ClubDetailScreen } from "./screens/ClubDetailScreen";
@@ -52,42 +54,46 @@ export default function App() {
       <WaveDivider />
 
       <main className="app-main">
-        {screen === "bag" && !openClubId && data.clubs.length > 0 && (
-          <InstallBanner
-            onLearnMore={() => {
-              setScreen("settings");
-              setShowAbout(true);
-            }}
-          />
-        )}
+        {!openClubId && !showAbout && <PageArt key={screen} src={PAGE_ART[screen]} />}
 
-        {screen === "bag" &&
-          (openClubId ? (
-            <ClubDetailScreen
-              data={data}
-              clubId={openClubId}
-              onUpdate={setData}
-              onBack={() => setOpenClubId(null)}
+        <div className="screen-content">
+          {screen === "bag" && !openClubId && data.clubs.length > 0 && (
+            <InstallBanner
+              onLearnMore={() => {
+                setScreen("settings");
+                setShowAbout(true);
+              }}
             />
-          ) : (
-            <BagScreen data={data} onUpdate={setData} onOpenClub={setOpenClubId} />
-          ))}
+          )}
 
-        {screen === "log" && <LogSessionScreen data={data} onUpdate={setData} />}
+          {screen === "bag" &&
+            (openClubId ? (
+              <ClubDetailScreen
+                data={data}
+                clubId={openClubId}
+                onUpdate={setData}
+                onBack={() => setOpenClubId(null)}
+              />
+            ) : (
+              <BagScreen data={data} onUpdate={setData} onOpenClub={setOpenClubId} />
+            ))}
 
-        {screen === "rangefinder" && <RangefinderScreen data={data} />}
+          {screen === "log" && <LogSessionScreen data={data} onUpdate={setData} />}
 
-        {screen === "settings" &&
-          (showAbout ? (
-            <AboutScreen onBack={() => setShowAbout(false)} />
-          ) : (
-            <SettingsScreen
-              data={data}
-              onUpdate={setData}
-              onReplaceAll={setData}
-              onShowAbout={() => setShowAbout(true)}
-            />
-          ))}
+          {screen === "rangefinder" && <RangefinderScreen data={data} />}
+
+          {screen === "settings" &&
+            (showAbout ? (
+              <AboutScreen onBack={() => setShowAbout(false)} />
+            ) : (
+              <SettingsScreen
+                data={data}
+                onUpdate={setData}
+                onReplaceAll={setData}
+                onShowAbout={() => setShowAbout(true)}
+              />
+            ))}
+        </div>
       </main>
 
       <BottomNav active={screen} onChange={goTo} />

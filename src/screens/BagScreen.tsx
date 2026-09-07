@@ -4,7 +4,6 @@ import type { AppData, Club } from "../types";
 import { generateId } from "../lib/math";
 import { CLUB_PRESETS } from "../lib/clubPresets";
 import { groupClubs } from "../lib/clubGrouping";
-import { TentacleClub } from "../components/art/TentacleClub";
 
 export function BagScreen({
   data,
@@ -185,7 +184,6 @@ export function BagScreen({
 
       {active.length === 0 && (
         <div className="empty-state">
-          <TentacleClub className="art" />
           <p>The depths are empty. Add your first club above.</p>
         </div>
       )}

@@ -96,6 +96,26 @@ input:focus, select:focus {
   min-height: 0;
 }
 
+.page-art {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 260px;
+  height: 260px;
+  max-width: 70vw;
+  max-height: 70vw;
+  pointer-events: none;
+  opacity: 0.95;
+  -webkit-mask-image: radial-gradient(ellipse 62% 92% at 50% 100%, black 38%, transparent 82%);
+  mask-image: radial-gradient(ellipse 62% 92% at 50% 100%, black 38%, transparent 82%);
+}
+
+.screen-content {
+  position: relative;
+  z-index: 1;
+}
+
 .install-banner {
   background: var(--accent-dim);
   border: 1px solid var(--accent);
@@ -127,6 +147,8 @@ input:focus, select:focus {
 .app-main {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
   padding: 4px 16px calc(88px + var(--safe-bottom));
   -webkit-overflow-scrolling: touch;
 }
