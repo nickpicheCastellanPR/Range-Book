@@ -52,7 +52,7 @@ export default function App() {
       <WaveDivider />
 
       <main className="app-main">
-        {screen === "bag" && !openClubId && (
+        {screen === "bag" && !openClubId && data.clubs.length > 0 && (
           <InstallBanner
             onLearnMore={() => {
               setScreen("settings");

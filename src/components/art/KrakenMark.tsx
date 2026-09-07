@@ -48,6 +48,27 @@ export function KrakenMark({ size = 40, className }: { size?: number; className?
           <path key={i} d={t.d} fill={t.color} stroke="#0a1420" strokeWidth="4" strokeLinejoin="round" />
         ))}
 
+        {/* clubs gripped by the upper-left/upper-right tentacles */}
+        <path d="M40,90 Q26,64 10,20" fill="none" stroke="#0a1420" strokeWidth="9" />
+        <path d="M40,90 Q26,64 10,20" fill="none" stroke="#c7d2d6" strokeWidth="4.5" />
+        <rect x="2" y="6" width="10" height="20" rx="4" fill="#1c2a37" stroke="#0a1420" strokeWidth="3" transform="rotate(-18 7 16)" />
+        <g transform="translate(-3,-8) rotate(-15)">
+          <path
+            d="M-20,-8 C-8,-16 14,-15 20,-2 C25,8 15,16 -2,15 C-16,15 -22,4 -20,-8 Z"
+            fill="#c7d2d6"
+            stroke="#0a1420"
+            strokeWidth="4"
+          />
+          <path d="M-16,-6 C-6,-11 8,-10 14,-2" fill="none" stroke="#0a1420" strokeWidth="1.5" opacity="0.5" />
+        </g>
+        <path d="M160,86 Q174,58 188,18" fill="none" stroke="#0a1420" strokeWidth="9" />
+        <path d="M160,86 Q174,58 188,18" fill="none" stroke="#c7d2d6" strokeWidth="4.5" />
+        <rect x="180" y="4" width="9" height="18" rx="4" fill="#1c2a37" stroke="#0a1420" strokeWidth="3" transform="rotate(18 184 13)" />
+        <g transform="translate(191,2) rotate(18)">
+          <path d="M-16,-5 L18,-9 L21,3 L-14,9 Z" fill="#c7d2d6" stroke="#0a1420" strokeWidth="4" />
+          <path d="M-10,-2 L14,-6 M-8,3 L15,-1" stroke="#0a1420" strokeWidth="1" opacity="0.4" />
+        </g>
+
         {/* head — pointed mantle, squid-style */}
         <path
           d="M100,8 C112,8 121,22 124,42 L129,78 C131,100 118,114 100,118 C82,114 69,100 71,78 L76,42 C79,22 88,8 100,8 Z"
@@ -73,8 +94,10 @@ export function KrakenMark({ size = 40, className }: { size?: number; className?
         <path d="M136,64 C126,56 113,56 105,63" fill="none" stroke="#0a1420" strokeWidth="6" />
 
         {/* eyes */}
-        <ellipse cx="79" cy="76" rx="12" ry="16" transform="rotate(-18 79 76)" fill="#ff7a2e" stroke="#0a1420" strokeWidth="5" />
-        <ellipse cx="121" cy="76" rx="12" ry="16" transform="rotate(18 121 76)" fill="#ff7a2e" stroke="#0a1420" strokeWidth="5" />
+        <ellipse cx="79" cy="76" rx="12" ry="16" transform="rotate(-18 79 76)" fill="#e0342a" stroke="#0a1420" strokeWidth="5" />
+        <ellipse cx="121" cy="76" rx="12" ry="16" transform="rotate(18 121 76)" fill="#e0342a" stroke="#0a1420" strokeWidth="5" />
+        <circle cx="76" cy="72" r="2.4" fill="#ff9a8f" opacity="0.85" />
+        <circle cx="118" cy="72" r="2.4" fill="#ff9a8f" opacity="0.85" />
         <circle cx="79" cy="78" r="3.5" fill="#0a1420" />
         <circle cx="121" cy="78" r="3.5" fill="#0a1420" />
 

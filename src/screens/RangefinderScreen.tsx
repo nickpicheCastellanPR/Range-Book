@@ -10,20 +10,21 @@ export function RangefinderScreen({ data }: { data: AppData }) {
   const [lie, setLie] = useState<Lie>("fairway");
 
   const distanceNum = parseFloat(distance);
+  const isValidDistance = Number.isFinite(distanceNum) && distanceNum > 0;
   const minCarryNum = minCarry.trim() === "" ? undefined : parseFloat(minCarry);
 
   const recommendations = useMemo(() => {
-    if (!Number.isFinite(distanceNum)) return [];
+    if (!isValidDistance) return [];
     return getRecommendations(data, {
       distance: distanceNum,
       lie,
       minCarry: minCarryNum,
     }).slice(0, 8);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [distanceNum, minCarryNum, lie, data]);
+  }, [isValidDistance, distanceNum, minCarryNum, lie, data]);
 
   const hazardBlocked =
-    Number.isFinite(distanceNum) &&
+    isValidDistance &&
     recommendations.length === 0 &&
     minCarryNum !== undefined &&
     minCarryNum > 0;
@@ -84,13 +85,13 @@ export function RangefinderScreen({ data }: { data: AppData }) {
         </div>
       </div>
 
-      {!Number.isFinite(distanceNum) && (
+      {!isValidDistance && (
         <p className="text-faint" style={{ textAlign: "center", marginTop: 8 }}>
           Enter a distance to see club options.
         </p>
       )}
 
-      {Number.isFinite(distanceNum) && recommendations.length === 0 && (
+      {isValidDistance && recommendations.length === 0 && (
         <div className="empty-state">
           <CompassRose size={100} className="art" style={{ opacity: 0.5 }} />
           <p>

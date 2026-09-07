@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { AppData, RangeSession, SwingLength } from "../types";
 import { ClubPicker } from "../components/ClubPicker";
 import { SwingLengthPicker } from "../components/SwingLengthPicker";
@@ -6,15 +6,25 @@ import { trimSwings } from "../lib/trimming";
 import { generateId } from "../lib/math";
 import { formatDispersion } from "../lib/dispersionText";
 
+type Direction = "left" | "right";
+
 interface DraftSwing {
   carry: string;
   total: string;
-  dispersion: string;
+  dispersionMag: string;
+  dispersionDir: Direction;
 }
 
 function emptyDraft(): DraftSwing[] {
-  return Array.from({ length: 10 }, () => ({ carry: "", total: "", dispersion: "" }));
+  return Array.from({ length: 10 }, () => ({
+    carry: "",
+    total: "",
+    dispersionMag: "",
+    dispersionDir: "right" as Direction,
+  }));
 }
+
+const FIELDS_PER_ROW = 3; // carry, total, dispersionMag — the three focusable inputs
 
 export function LogSessionScreen({
   data,
@@ -27,12 +37,16 @@ export function LogSessionScreen({
   const [swingLength, setSwingLength] = useState<SwingLength>("full");
   const [swings, setSwings] = useState<DraftSwing[]>(emptyDraft());
   const [saved, setSaved] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  const parsed = swings.map((s) => ({
-    carry: parseFloat(s.carry),
-    total: parseFloat(s.total),
-    dispersion: parseFloat(s.dispersion || "0"),
-  }));
+  const parsed = swings.map((s) => {
+    const mag = parseFloat(s.dispersionMag || "0");
+    return {
+      carry: parseFloat(s.carry),
+      total: parseFloat(s.total),
+      dispersion: s.dispersionDir === "left" ? -mag : mag,
+    };
+  });
 
   const allFilled = parsed.every(
     (s) => Number.isFinite(s.carry) && Number.isFinite(s.total),
@@ -48,11 +62,35 @@ export function LogSessionScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allFilled, JSON.stringify(swings)]);
 
-  function updateSwing(i: number, field: keyof DraftSwing, value: string) {
+  const rowWarnings = parsed.map((s) => {
+    if (!Number.isFinite(s.carry) || !Number.isFinite(s.total)) return null;
+    if (s.total < s.carry) return "Total is less than carry — double check this row.";
+    if (s.carry < 10) return "That carry looks short — check for a missing digit.";
+    if (s.carry > 380) return "That carry looks long — check for an extra digit.";
+    return null;
+  });
+
+  function updateField(i: number, field: "carry" | "total" | "dispersionMag", value: string) {
     setSaved(false);
-    setSwings((prev) =>
-      prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)),
-    );
+    setSwings((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
+  }
+
+  function updateDir(i: number, dir: Direction) {
+    setSaved(false);
+    setSwings((prev) => prev.map((s, idx) => (idx === i ? { ...s, dispersionDir: dir } : s)));
+  }
+
+  function focusField(index: number) {
+    inputRefs.current[index]?.focus();
+  }
+
+  function handleEnter(index: number) {
+    const next = index + 1;
+    if (next < swings.length * FIELDS_PER_ROW) {
+      focusField(next);
+    } else {
+      inputRefs.current[index]?.blur();
+    }
   }
 
   function save() {
@@ -68,6 +106,7 @@ export function LogSessionScreen({
     onUpdate({ ...data, sessions: [...data.sessions, session] });
     setSwings(emptyDraft());
     setSaved(true);
+    focusField(0);
   }
 
   const club = data.clubs.find((c) => c.id === clubId);
@@ -92,36 +131,79 @@ export function LogSessionScreen({
       </div>
 
       <div className="card">
-        <div className="card-title">
-          10 swings · carry / total / dispersion (yd, − left / + right)
-        </div>
+        <div className="card-title">10 swings · carry / total / dispersion</div>
         <p className="text-faint" style={{ marginTop: -4, marginBottom: 10 }}>
-          We drop your 2 shortest and 2 longest carries and average the remaining 6 — one chunk or one flush strike won't skew your number.
+          We drop your 2 shortest and 2 longest carries and average the remaining 6 — one chunk or one flush
+          strike won't skew your number. Tip: hit "next" on the keyboard to move field to field without tapping.
         </p>
         <div className="stack" style={{ gap: 0 }}>
           {swings.map((s, i) => {
             const dropped = preview?.droppedIndexes.includes(i);
+            const base = i * FIELDS_PER_ROW;
+            const warning = rowWarnings[i];
             return (
-              <div className={`swing-row${dropped ? " dropped" : ""}`} key={i}>
-                <span className="idx">{i + 1}</span>
-                <input
-                  inputMode="decimal"
-                  placeholder="Carry"
-                  value={s.carry}
-                  onChange={(e) => updateSwing(i, "carry", e.target.value)}
-                />
-                <input
-                  inputMode="decimal"
-                  placeholder="Total"
-                  value={s.total}
-                  onChange={(e) => updateSwing(i, "total", e.target.value)}
-                />
-                <input
-                  inputMode="decimal"
-                  placeholder="±yd"
-                  value={s.dispersion}
-                  onChange={(e) => updateSwing(i, "dispersion", e.target.value)}
-                />
+              <div key={i}>
+                <div className={`swing-row${dropped ? " dropped" : ""}`}>
+                  <span className="idx">{i + 1}</span>
+                  <input
+                    ref={(el) => {
+                      inputRefs.current[base] = el;
+                    }}
+                    inputMode="decimal"
+                    enterKeyHint="next"
+                    placeholder="Carry"
+                    value={s.carry}
+                    onChange={(e) => updateField(i, "carry", e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleEnter(base))}
+                  />
+                  <input
+                    ref={(el) => {
+                      inputRefs.current[base + 1] = el;
+                    }}
+                    inputMode="decimal"
+                    enterKeyHint="next"
+                    placeholder="Total"
+                    value={s.total}
+                    onChange={(e) => updateField(i, "total", e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleEnter(base + 1))}
+                  />
+                  <div className="dispersion-cell">
+                    <input
+                      ref={(el) => {
+                        inputRefs.current[base + 2] = el;
+                      }}
+                      inputMode="decimal"
+                      enterKeyHint={i === swings.length - 1 ? "done" : "next"}
+                      placeholder="yd"
+                      value={s.dispersionMag}
+                      onChange={(e) => updateField(i, "dispersionMag", e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleEnter(base + 2))}
+                    />
+                    <div className="lr-toggle">
+                      <button
+                        type="button"
+                        className={s.dispersionDir === "left" ? "active" : ""}
+                        onClick={() => updateDir(i, "left")}
+                        aria-label="Missed left"
+                      >
+                        L
+                      </button>
+                      <button
+                        type="button"
+                        className={s.dispersionDir === "right" ? "active" : ""}
+                        onClick={() => updateDir(i, "right")}
+                        aria-label="Missed right"
+                      >
+                        R
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                {warning && (
+                  <p className="text-faint" style={{ color: "var(--warn)", marginTop: -2, marginBottom: 4 }}>
+                    {warning}
+                  </p>
+                )}
               </div>
             );
           })}

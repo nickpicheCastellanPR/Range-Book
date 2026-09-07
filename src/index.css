@@ -240,6 +240,13 @@ input:focus, select:focus {
   border: 1px solid var(--danger-dim);
 }
 
+.btn-caution {
+  background: transparent;
+  color: var(--warn);
+  border: 1px solid var(--warn);
+  opacity: 0.85;
+}
+
 .btn-ghost {
   background: transparent;
   color: var(--text-dim);
@@ -363,8 +370,8 @@ input:focus, select:focus {
 
 .swing-row {
   display: grid;
-  grid-template-columns: 22px 1fr 1fr 1fr;
-  gap: 8px;
+  grid-template-columns: 20px 1fr 1fr 1.2fr;
+  gap: 6px;
   align-items: center;
   padding: 6px 0;
 }
@@ -384,6 +391,52 @@ input:focus, select:focus {
 
 .swing-row.dropped {
   opacity: 0.4;
+}
+
+.dispersion-cell {
+  display: flex;
+  gap: 3px;
+  min-width: 0;
+}
+
+.dispersion-cell input {
+  flex: 1;
+  min-width: 0;
+}
+
+.lr-toggle {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.lr-toggle button {
+  appearance: none;
+  width: 24px;
+  height: 17px;
+  padding: 0;
+  border: 1px solid var(--card-border);
+  border-radius: 4px;
+  background: var(--bg-elevated);
+  color: var(--text-faint);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.lr-toggle button.active {
+  border-color: transparent;
+}
+
+.lr-toggle button:first-child.active {
+  background: var(--left);
+  color: var(--accent-text);
+}
+
+.lr-toggle button:last-child.active {
+  background: var(--right);
+  color: #2a0f04;
 }
 
 .badge {

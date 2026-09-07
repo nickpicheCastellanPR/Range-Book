@@ -133,7 +133,11 @@ export function BagScreen({
           <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => startRename(club)}>
             Rename
           </button>
-          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => toggleActive(club)}>
+          <button
+            className={variant === "active" ? "btn btn-caution" : "btn btn-ghost"}
+            style={{ flex: 1 }}
+            onClick={() => toggleActive(club)}
+          >
             {variant === "active" ? "Retire" : "Restore"}
           </button>
           <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => deleteClub(club)}>

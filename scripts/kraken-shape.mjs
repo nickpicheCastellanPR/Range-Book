@@ -95,19 +95,57 @@ export const MANTLE_DOTS = [
   [115, 92, 3],
 ];
 
+// a driver gripped by the upper-left tentacle, an iron by the upper-right —
+// clubheads visible above the grasp, shaft implied to continue down into it
+export function clubsSvg() {
+  return `
+      <path d="M40,90 Q26,64 10,20" fill="none" stroke="#08111a" stroke-width="9"/>
+      <path d="M40,90 Q26,64 10,20" fill="none" stroke="#c7d2d6" stroke-width="4.5"/>
+      <rect x="2" y="6" width="10" height="20" rx="4" fill="#1c2a37" stroke="#08111a" stroke-width="3" transform="rotate(-18 7 16)"/>
+      <g transform="translate(-3,-8) rotate(-15)">
+        <path d="M-20,-8 C-8,-16 14,-15 20,-2 C25,8 15,16 -2,15 C-16,15 -22,4 -20,-8 Z" fill="#c7d2d6" stroke="#08111a" stroke-width="4"/>
+        <path d="M-16,-6 C-6,-11 8,-10 14,-2" fill="none" stroke="#08111a" stroke-width="1.5" opacity="0.5"/>
+      </g>
+      <path d="M160,86 Q174,58 188,18" fill="none" stroke="#08111a" stroke-width="9"/>
+      <path d="M160,86 Q174,58 188,18" fill="none" stroke="#c7d2d6" stroke-width="4.5"/>
+      <rect x="180" y="4" width="9" height="18" rx="4" fill="#1c2a37" stroke="#08111a" stroke-width="3" transform="rotate(18 184 13)"/>
+      <g transform="translate(191,2) rotate(18)">
+        <path d="M-16,-5 L18,-9 L21,3 L-14,9 Z" fill="#c7d2d6" stroke="#08111a" stroke-width="4"/>
+        <path d="M-10,-2 L14,-6 M-8,3 L15,-1" stroke="#08111a" stroke-width="1" opacity="0.4"/>
+      </g>`;
+}
+
 export function krakenGroupSvg() {
   const dots = MANTLE_DOTS.map(([cx, cy, r]) => `<circle cx="${cx}" cy="${cy}" r="${r}"/>`).join("");
   return `
       ${tentaclesSvg()}
+      ${clubsSvg()}
       <path d="${HEAD_PATH}" fill="#5fe0cd" stroke="#08111a" stroke-width="8"/>
       <g fill="#39a596" opacity="0.85">${dots}</g>
       <path d="M64,64 C74,56 87,56 95,63" fill="none" stroke="#08111a" stroke-width="6" stroke-linecap="round"/>
       <path d="M136,64 C126,56 113,56 105,63" fill="none" stroke="#08111a" stroke-width="6" stroke-linecap="round"/>
-      <ellipse cx="79" cy="76" rx="12" ry="16" transform="rotate(-18 79 76)" fill="#ff7a2e" stroke="#08111a" stroke-width="5"/>
-      <ellipse cx="121" cy="76" rx="12" ry="16" transform="rotate(18 121 76)" fill="#ff7a2e" stroke="#08111a" stroke-width="5"/>
+      <ellipse cx="79" cy="76" rx="12" ry="16" transform="rotate(-18 79 76)" fill="#e0342a" stroke="#08111a" stroke-width="5"/>
+      <ellipse cx="121" cy="76" rx="12" ry="16" transform="rotate(18 121 76)" fill="#e0342a" stroke="#08111a" stroke-width="5"/>
+      <circle cx="76" cy="72" r="2.4" fill="#ff9a8f" opacity="0.85"/>
+      <circle cx="118" cy="72" r="2.4" fill="#ff9a8f" opacity="0.85"/>
       <circle cx="79" cy="78" r="3.5" fill="#08111a"/>
       <circle cx="121" cy="78" r="3.5" fill="#08111a"/>
       <path d="M92,95 L108,95 L100,106 Z" fill="#08111a"/>`;
+}
+
+// faint marbled crack lines behind the kraken — original pattern, hand-drawn
+function crackTextureSvg() {
+  const cracks = [
+    "M40,60 L110,140 L90,230 L150,300 L120,400",
+    "M470,90 L400,170 L430,250 L370,330 L400,420",
+    "M20,300 L90,340 L70,420 L140,460",
+    "M480,300 L420,330 L440,400 L390,440",
+    "M250,20 L230,90 L280,130 L260,190",
+    "M180,460 L220,410 L200,350 L250,320",
+  ];
+  return cracks
+    .map((d) => `<path d="${d}" fill="none" stroke="#2c4256" stroke-width="2" opacity="0.35" stroke-linecap="round" stroke-linejoin="round"/>`)
+    .join("\n    ");
 }
 
 export function renderIconSvg() {
@@ -121,6 +159,7 @@ export function renderIconSvg() {
   </defs>
   <g clip-path="url(#clip)">
     <rect width="512" height="512" fill="url(#bg)"/>
+    ${crackTextureSvg()}
     <g transform="translate(76,34) scale(1.8)" stroke-linecap="round" stroke-linejoin="round">${krakenGroupSvg()}
     </g>
     <g transform="translate(0,404)">

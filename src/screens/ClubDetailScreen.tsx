@@ -76,7 +76,7 @@ export function ClubDetailScreen({
                 {maxCarry && (
                   <div className="row" style={{ marginTop: 6 }}>
                     <span className="text-dim">Longest carry</span>
-                    <span style={{ fontWeight: 700, color: "var(--danger)" }}>
+                    <span style={{ fontWeight: 700, color: "var(--warn)" }}>
                       {maxCarry.carry} yd
                     </span>
                   </div>
