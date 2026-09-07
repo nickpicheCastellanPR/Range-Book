@@ -1,4 +1,4 @@
-import { DEFAULT_SETTINGS, type AppData } from "../types";
+import { DEFAULT_SETTINGS, SWING_LENGTHS, type AppData } from "../types";
 
 const STORAGE_KEY = "range-book:data:v1";
 
@@ -38,6 +38,52 @@ export function exportData(data: AppData): void {
   const stamp = new Date().toISOString().slice(0, 10);
   a.href = url;
   a.download = `range-book-backup-${stamp}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function csvField(value: string | number): string {
+  const str = String(value);
+  return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+}
+
+/**
+ * One row per raw logged swing (not the trimmed average) — for dropping
+ * into a spreadsheet. Not re-importable; use exportData()/JSON for backup.
+ */
+export function exportCsv(data: AppData): void {
+  const clubName = new Map(data.clubs.map((c) => [c.id, c.name]));
+  const swingLengthLabel = new Map(SWING_LENGTHS.map((s) => [s.key, s.label]));
+
+  const header = ["Club", "Swing Length", "Date", "Swing #", "Carry", "Total", "Dispersion", "Kept in average"];
+  const rows = [header.map(csvField).join(",")];
+
+  const sorted = [...data.sessions].sort((a, b) => a.date.localeCompare(b.date));
+  for (const session of sorted) {
+    const kept = new Set(session.keptIndexes);
+    session.swings.forEach((swing, i) => {
+      rows.push(
+        [
+          csvField(clubName.get(session.clubId) ?? "Unknown club"),
+          csvField(swingLengthLabel.get(session.swingLength) ?? session.swingLength),
+          csvField(new Date(session.date).toISOString().slice(0, 10)),
+          i + 1,
+          swing.carry,
+          swing.total,
+          swing.dispersion,
+          kept.has(i) ? "yes" : "no",
+        ].join(","),
+      );
+    });
+  }
+
+  const BOM = "﻿"; // so Excel reads the file as UTF-8
+  const blob = new Blob([BOM + rows.join("\n")], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const stamp = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `range-book-swings-${stamp}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }

@@ -97,6 +97,15 @@ export function AboutScreen({ onBack }: { onBack: () => void }) {
           before a phone upgrade — to save a JSON file you can re-import later. Importing replaces all current
           data, so it asks you to confirm first.
         </p>
+        <p className="text-dim" style={{ marginTop: 8 }}>
+          Clearing your browser's history/site data (or a full phone reset) wipes this data permanently — same as
+          any other website. An app update never does; that only changes the app's code, not what's stored on your
+          device.
+        </p>
+        <p className="text-dim" style={{ marginTop: 8 }}>
+          Want your swings in a spreadsheet instead? <strong>Export swings (.csv)</strong> in Settings gives you one
+          row per logged swing — not something you can re-import, just for your own analysis.
+        </p>
       </div>
     </div>
   );

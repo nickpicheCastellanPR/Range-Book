@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import { LIES, type AppData } from "../types";
-import { exportData, parseImportedFile } from "../lib/storage";
+import { exportCsv, exportData, parseImportedFile } from "../lib/storage";
 
 export function SettingsScreen({
   data,
@@ -89,6 +89,20 @@ export function SettingsScreen({
           />
           {importError && <p className="text-faint" style={{ color: "var(--danger)" }}>{importError}</p>}
         </div>
+        <p className="text-faint" style={{ marginTop: 8 }}>
+          The JSON backup is the only file that can be re-imported — keep one before switching phones.
+        </p>
+      </div>
+
+      <div className="card">
+        <div className="card-title">Export to spreadsheet</div>
+        <p className="text-dim">
+          Every logged swing — club, date, carry, total, dispersion, and whether it was one of the 6 kept in the
+          average — as one row each.
+        </p>
+        <button className="btn btn-ghost btn-block" style={{ marginTop: 10 }} onClick={() => exportCsv(data)}>
+          Export swings (.csv)
+        </button>
       </div>
 
       {confirmImport && (
