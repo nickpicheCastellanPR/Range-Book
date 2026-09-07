@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ChangeEvent } from "react";
 import type { AppData, Club } from "../types";
 import { generateId } from "../lib/math";
 import { CLUB_PRESETS } from "../lib/clubPresets";
+import { classifyClub, groupOrderIndex } from "../lib/clubGrouping";
 import { TentacleClub } from "../components/art/TentacleClub";
 
 export function BagScreen({
@@ -19,6 +20,21 @@ export function BagScreen({
   const clubs = [...data.clubs].sort((a, b) => a.order - b.order);
   const active = clubs.filter((c) => c.active);
   const retired = clubs.filter((c) => !c.active);
+
+  const groupedActive = useMemo(() => {
+    const withMeta = active.map((club) => ({ club, ...classifyClub(club.name) }));
+    const byGroup = new Map<string, typeof withMeta>();
+    for (const item of withMeta) {
+      if (!byGroup.has(item.group)) byGroup.set(item.group, []);
+      byGroup.get(item.group)!.push(item);
+    }
+    for (const list of byGroup.values()) {
+      list.sort((a, b) => a.sortIndex - b.sortIndex || a.club.order - b.club.order);
+    }
+    return [...byGroup.entries()]
+      .sort((a, b) => groupOrderIndex(a[0]) - groupOrderIndex(b[0]))
+      .map(([group, items]) => ({ group, clubs: items.map((i) => i.club) }));
+  }, [active]);
 
   function addClubNamed(name: string) {
     const trimmed = name.trim();
@@ -68,23 +84,6 @@ export function BagScreen({
     });
   }
 
-  function move(club: Club, dir: -1 | 1) {
-    const sorted = [...active].sort((a, b) => a.order - b.order);
-    const idx = sorted.findIndex((c) => c.id === club.id);
-    const swapIdx = idx + dir;
-    if (swapIdx < 0 || swapIdx >= sorted.length) return;
-    const a = sorted[idx];
-    const b = sorted[swapIdx];
-    onUpdate({
-      ...data,
-      clubs: data.clubs.map((c) => {
-        if (c.id === a.id) return { ...c, order: b.order };
-        if (c.id === b.id) return { ...c, order: a.order };
-        return c;
-      }),
-    });
-  }
-
   return (
     <div className="stack">
       <div className="card">
@@ -127,36 +126,43 @@ export function BagScreen({
         </div>
       )}
 
-      {active.map((club) => (
-        <div className="card" key={club.id}>
-          <button
-            onClick={() => onOpenClub(club.id)}
-            style={{
-              background: "none",
-              border: "none",
-              textAlign: "left",
-              width: "100%",
-              padding: 0,
-            }}
-          >
-            <div style={{ fontSize: 16, fontWeight: 600 }}>{club.name}</div>
-            <div className="text-faint">Tap to view distances & trends</div>
-          </button>
-          <div className="row" style={{ marginTop: 10, gap: 6 }}>
-            <button className="btn btn-ghost btn-icon" onClick={() => move(club, -1)} aria-label="Move up">
-              ↑
-            </button>
-            <button className="btn btn-ghost btn-icon" onClick={() => move(club, 1)} aria-label="Move down">
-              ↓
-            </button>
-            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => toggleActive(club)}>
-              Retire
-            </button>
-            <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => deleteClub(club)}>
-              Delete
-            </button>
+      {groupedActive.map(({ group, clubs: groupClubs }) => (
+        <details key={group} className="club-group" open>
+          <summary className="club-group-summary">
+            <span className="chevron">▶</span>
+            {group}
+            <span className="text-faint" style={{ marginLeft: "auto" }}>
+              {groupClubs.length}
+            </span>
+          </summary>
+          <div className="stack" style={{ marginTop: 8 }}>
+            {groupClubs.map((club) => (
+              <div className="card" key={club.id}>
+                <button
+                  onClick={() => onOpenClub(club.id)}
+                  style={{
+                    background: "none",
+                    border: "none",
+                    textAlign: "left",
+                    width: "100%",
+                    padding: 0,
+                  }}
+                >
+                  <div style={{ fontSize: 16, fontWeight: 600 }}>{club.name}</div>
+                  <div className="text-faint">Tap to view distances & trends</div>
+                </button>
+                <div className="row" style={{ marginTop: 10, gap: 6 }}>
+                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => toggleActive(club)}>
+                    Retire
+                  </button>
+                  <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => deleteClub(club)}>
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        </details>
       ))}
 
       {retired.length > 0 && (
