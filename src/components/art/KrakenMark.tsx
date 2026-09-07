@@ -1,6 +1,7 @@
 /**
  * Stylized kraken emblem in the headcover's embroidered-patch style:
- * flat teal fills, thick black outlines, angry orange eyes.
+ * pointed squid-like mantle, flat teal fill with sucker-dot texture,
+ * thick black outlines, five asymmetric tentacles, angry orange eyes.
  */
 export function KrakenMark({ size = 40, className }: { size?: number; className?: string }) {
   return (
@@ -13,50 +14,71 @@ export function KrakenMark({ size = 40, className }: { size?: number; className?
       aria-label="Kraken emblem"
     >
       <g strokeLinecap="round" strokeLinejoin="round">
-        {/* tentacles, drawn behind the head, double-stroked for a thick ink outline */}
+        {/* tentacles, drawn behind the head, double-stroked for a thick ink outline.
+            each one is a distinct shape/length/curl so nothing mirrors. */}
         <g fill="none">
-          <path d="M66,108 C44,118 24,112 18,90 C13,72 24,56 42,54" stroke="#0a1420" strokeWidth="15" />
-          <path d="M66,108 C44,118 24,112 18,90 C13,72 24,56 42,54" stroke="#3fb6a5" strokeWidth="8" />
+          <path d="M62,108 C38,114 16,104 15,80 C14,62 30,49 47,52 C55,53 59,60 53,66" stroke="#0a1420" strokeWidth="15" />
+          <path d="M62,108 C38,114 16,104 15,80 C14,62 30,49 47,52 C55,53 59,60 53,66" stroke="#3fb6a5" strokeWidth="8" />
 
-          <path d="M80,124 C64,148 62,176 82,190 C92,197 103,192 100,180" stroke="#0a1420" strokeWidth="15" />
-          <path d="M80,124 C64,148 62,176 82,190 C92,197 103,192 100,180" stroke="#3fb6a5" strokeWidth="8" />
+          <path d="M76,120 C56,130 48,152 60,170 C68,182 82,184 87,172" stroke="#0a1420" strokeWidth="15" />
+          <path d="M76,120 C56,130 48,152 60,170 C68,182 82,184 87,172" stroke="#4fd8c4" strokeWidth="8" />
 
-          <path d="M100,128 C99,156 92,182 106,196" stroke="#0a1420" strokeWidth="15" />
-          <path d="M100,128 C99,156 92,182 106,196" stroke="#4fd8c4" strokeWidth="8" />
+          <path d="M98,126 C96,152 102,176 94,194 C90,202 80,202 78,192" stroke="#0a1420" strokeWidth="15" />
+          <path d="M98,126 C96,152 102,176 94,194 C90,202 80,202 78,192" stroke="#3fb6a5" strokeWidth="8" />
 
-          <path d="M120,124 C136,148 138,176 118,190 C108,197 97,192 100,180" stroke="#0a1420" strokeWidth="15" />
-          <path d="M120,124 C136,148 138,176 118,190 C108,197 97,192 100,180" stroke="#3fb6a5" strokeWidth="8" />
+          <path d="M116,118 C134,122 146,138 140,158 C136,172 120,178 112,168" stroke="#0a1420" strokeWidth="15" />
+          <path d="M116,118 C134,122 146,138 140,158 C136,172 120,178 112,168" stroke="#4fd8c4" strokeWidth="8" />
 
-          <path d="M134,108 C156,118 176,112 182,90 C187,72 176,56 158,54" stroke="#0a1420" strokeWidth="15" />
-          <path d="M134,108 C156,118 176,112 182,90 C187,72 176,56 158,54" stroke="#3fb6a5" strokeWidth="8" />
+          <path d="M128,102 C152,106 172,94 168,70 C165,53 146,45 133,53 C126,57 127,66 136,70" stroke="#0a1420" strokeWidth="15" />
+          <path d="M128,102 C152,106 172,94 168,70 C165,53 146,45 133,53 C126,57 127,66 136,70" stroke="#3fb6a5" strokeWidth="8" />
         </g>
 
-        {/* head */}
+        {/* suckers along the tentacles for texture */}
+        <g fill="#1c4d47">
+          <circle cx="30" cy="88" r="3.6" />
+          <circle cx="46" cy="66" r="3.2" />
+          <circle cx="57" cy="145" r="3.6" />
+          <circle cx="70" cy="168" r="3" />
+          <circle cx="98" cy="160" r="3.4" />
+          <circle cx="90" cy="188" r="3" />
+          <circle cx="130" cy="140" r="3.4" />
+          <circle cx="122" cy="166" r="3" />
+          <circle cx="156" cy="80" r="3.6" />
+          <circle cx="140" cy="58" r="3" />
+        </g>
+
+        {/* head — pointed mantle, squid-style */}
         <path
-          d="M100,20 C132,20 150,46 147,76 C145,98 128,116 100,120 C72,116 55,98 53,76 C50,46 68,20 100,20 Z"
+          d="M100,8 C112,8 121,22 124,42 L129,78 C131,100 118,114 100,118 C82,114 69,100 71,78 L76,42 C79,22 88,8 100,8 Z"
           fill="#5fe0cd"
           stroke="#0a1420"
           strokeWidth="8"
         />
-        {/* head shading */}
-        <path
-          d="M100,20 C132,20 150,46 147,76 C145,98 128,116 100,120 L100,20 Z"
-          fill="#39a596"
-          opacity="0.55"
-        />
+
+        {/* mantle texture: scattered suckers instead of a flat shade split */}
+        <g fill="#39a596" opacity="0.85">
+          <circle cx="100" cy="26" r="4.2" />
+          <circle cx="88" cy="40" r="3.4" />
+          <circle cx="113" cy="44" r="3.6" />
+          <circle cx="80" cy="60" r="3" />
+          <circle cx="121" cy="62" r="3.2" />
+          <circle cx="100" cy="100" r="3.6" />
+          <circle cx="86" cy="94" r="2.8" />
+          <circle cx="115" cy="92" r="3" />
+        </g>
 
         {/* brow */}
-        <path d="M66,66 C76,58 88,58 96,64" fill="none" stroke="#0a1420" strokeWidth="6" />
-        <path d="M134,66 C124,58 112,58 104,64" fill="none" stroke="#0a1420" strokeWidth="6" />
+        <path d="M64,64 C74,56 87,56 95,63" fill="none" stroke="#0a1420" strokeWidth="6" />
+        <path d="M136,64 C126,56 113,56 105,63" fill="none" stroke="#0a1420" strokeWidth="6" />
 
         {/* eyes */}
-        <ellipse cx="80" cy="78" rx="12" ry="16" transform="rotate(-18 80 78)" fill="#ff7a2e" stroke="#0a1420" strokeWidth="5" />
-        <ellipse cx="120" cy="78" rx="12" ry="16" transform="rotate(18 120 78)" fill="#ff7a2e" stroke="#0a1420" strokeWidth="5" />
-        <circle cx="80" cy="80" r="3.5" fill="#0a1420" />
-        <circle cx="120" cy="80" r="3.5" fill="#0a1420" />
+        <ellipse cx="79" cy="76" rx="12" ry="16" transform="rotate(-18 79 76)" fill="#ff7a2e" stroke="#0a1420" strokeWidth="5" />
+        <ellipse cx="121" cy="76" rx="12" ry="16" transform="rotate(18 121 76)" fill="#ff7a2e" stroke="#0a1420" strokeWidth="5" />
+        <circle cx="79" cy="78" r="3.5" fill="#0a1420" />
+        <circle cx="121" cy="78" r="3.5" fill="#0a1420" />
 
         {/* beak */}
-        <path d="M92,96 L108,96 L100,107 Z" fill="#0a1420" />
+        <path d="M92,95 L108,95 L100,106 Z" fill="#0a1420" />
       </g>
     </svg>
   );
