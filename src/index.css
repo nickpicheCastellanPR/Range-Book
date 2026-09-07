@@ -1,21 +1,29 @@
 :root {
   color-scheme: dark;
 
-  --bg: #0f1613;
-  --bg-elevated: #161f1a;
-  --card: #1b2620;
-  --card-border: #2a382f;
-  --text: #eef2ee;
-  --text-dim: #9fb0a4;
-  --text-faint: #6b7a70;
-  --accent: #4ade80;
-  --accent-dim: #2f6b47;
-  --accent-text: #08130c;
-  --danger: #f87171;
-  --warn: #fbbf24;
-  --left: #60a5fa;
-  --right: #f97316;
-  --nav-bg: rgba(22, 31, 26, 0.92);
+  /* deep-sea navy, teal kraken ink, ember eyes */
+  --bg: #0b131c;
+  --bg-elevated: #142230;
+  --card: #172736;
+  --card-border: #2b4256;
+  --text: #eaf5f2;
+  --text-dim: #9fbcc4;
+  --text-faint: #5c7c88;
+  --accent: #4fd8c4;
+  --accent-bright: #8feee0;
+  --accent-dim: #1c4d47;
+  --accent-text: #052420;
+  --danger: #ff7a45;
+  --danger-dim: #4a2416;
+  --warn: #ffb84d;
+  --left: #4fd8c4;
+  --right: #ff7a45;
+  --foam: #dff4f0;
+  --ink: #0a1420;
+  --nav-bg: rgba(11, 19, 28, 0.9);
+
+  --font-display: "Cinzel", "Iowan Old Style", Georgia, serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
   --radius: 14px;
   --radius-sm: 10px;
@@ -33,9 +41,17 @@ body {
   padding: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-body);
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior-y: contain;
+}
+
+body {
+  background-image:
+    radial-gradient(ellipse at 20% -10%, rgba(79, 216, 196, 0.08), transparent 55%),
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 26px),
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 1px, transparent 1px, transparent 26px);
+  background-attachment: fixed;
 }
 
 #root {
@@ -49,12 +65,17 @@ h1, h2, h3, h4, p {
   margin: 0;
 }
 
+h1, h2, h3 {
+  font-family: var(--font-display);
+  letter-spacing: 0.01em;
+}
+
 button {
   font-family: inherit;
 }
 
 input, select {
-  font-family: inherit;
+  font-family: var(--font-body);
   font-size: 16px;
   color: var(--text);
   background: var(--bg-elevated);
@@ -76,17 +97,18 @@ input:focus, select:focus {
 }
 
 .app-header {
-  padding: calc(var(--safe-top) + 16px) 20px 12px;
+  padding: calc(var(--safe-top) + 16px) 20px 0;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
   flex-shrink: 0;
 }
 
 .app-header h1 {
-  font-size: 20px;
+  font-size: 21px;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.02em;
+  flex: 1;
 }
 
 .app-main {
@@ -97,11 +119,13 @@ input:focus, select:focus {
 }
 
 .card {
+  position: relative;
   background: var(--card);
   border: 1px solid var(--card-border);
   border-radius: var(--radius);
   padding: 16px;
   margin-bottom: 12px;
+  overflow: hidden;
 }
 
 .card-title {
@@ -109,7 +133,7 @@ input:focus, select:focus {
   font-weight: 600;
   color: var(--text-dim);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   margin-bottom: 10px;
 }
 
@@ -146,6 +170,7 @@ input:focus, select:focus {
   font-weight: 600;
   background: var(--card-border);
   color: var(--text);
+  font-family: var(--font-body);
 }
 
 .btn:active {
@@ -153,8 +178,9 @@ input:focus, select:focus {
 }
 
 .btn-primary {
-  background: var(--accent);
+  background: linear-gradient(180deg, var(--accent-bright), var(--accent));
   color: var(--accent-text);
+  font-weight: 700;
 }
 
 .btn-danger {
@@ -170,6 +196,11 @@ input:focus, select:focus {
 
 .btn-block {
   width: 100%;
+}
+
+.btn-icon {
+  padding: 10px 14px;
+  flex: 0 0 auto;
 }
 
 .pill-group {
@@ -218,19 +249,19 @@ input:focus, select:focus {
   font-size: 11px;
   color: var(--text-faint);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
   margin-top: 2px;
 }
 
 .empty-state {
   text-align: center;
-  padding: 48px 20px;
+  padding: 32px 20px 40px;
   color: var(--text-faint);
 }
 
-.empty-state .icon {
-  font-size: 40px;
-  margin-bottom: 12px;
+.empty-state .art {
+  margin: 0 auto 8px;
+  width: 140px;
 }
 
 .bottom-nav {
@@ -252,7 +283,7 @@ input:focus, select:focus {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   background: none;
   border: none;
   color: var(--text-faint);
@@ -261,13 +292,17 @@ input:focus, select:focus {
 }
 
 .nav-item .icon {
-  font-size: 20px;
-  line-height: 1;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-item .label {
   font-size: 11px;
   font-weight: 600;
+  font-family: var(--font-body);
 }
 
 .nav-item.active {
@@ -289,7 +324,9 @@ input:focus, select:focus {
 }
 
 .swing-row input {
-  padding: 8px;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 4px;
   text-align: center;
 }
 
@@ -304,7 +341,7 @@ input:focus, select:focus {
   padding: 3px 8px;
   border-radius: 999px;
   background: var(--accent-dim);
-  color: var(--accent);
+  color: var(--accent-bright);
 }
 
 .badge-muted {
@@ -319,6 +356,16 @@ input:focus, select:focus {
 .text-faint {
   color: var(--text-faint);
   font-size: 13px;
+}
+
+.text-left {
+  color: var(--left);
+  font-weight: 700;
+}
+
+.text-right {
+  color: var(--right);
+  font-weight: 700;
 }
 
 .rec-card {
@@ -336,25 +383,44 @@ input:focus, select:focus {
   align-items: center;
   justify-content: center;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
   flex-shrink: 0;
 }
 
 .rec-rank.best {
-  background: var(--accent);
-  color: var(--accent-text);
+  background: linear-gradient(180deg, var(--danger), #d9531f);
+  color: #2a0f04;
+}
+
+.section-divider {
+  margin: 18px 0 10px;
+  opacity: 0.85;
+}
+
+.compass-watermark {
+  position: absolute;
+  right: -18px;
+  bottom: -18px;
+  opacity: 0.06;
+  pointer-events: none;
 }
 
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
     color-scheme: light;
-    --bg: #f4f7f4;
+    --bg: #eef6f5;
     --bg-elevated: #ffffff;
     --card: #ffffff;
-    --card-border: #dfe6e0;
-    --text: #131a15;
-    --text-dim: #4c5c51;
-    --text-faint: #8a998e;
-    --accent-text: #06120a;
-    --nav-bg: rgba(255, 255, 255, 0.85);
+    --card-border: #cfe4e0;
+    --text: #0c2622;
+    --text-dim: #43635d;
+    --text-faint: #82a29c;
+    --accent: #14a08c;
+    --accent-bright: #0c8474;
+    --accent-dim: #d6f0ec;
+    --accent-text: #ffffff;
+    --danger: #dd5326;
+    --danger-dim: #fbe3d7;
+    --nav-bg: rgba(255, 255, 255, 0.88);
   }
 }

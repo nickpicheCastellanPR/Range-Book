@@ -141,7 +141,7 @@ export function LogSessionScreen({
           </div>
           <div className="row" style={{ marginTop: 10 }}>
             <span className="text-dim">Avg dispersion</span>
-            <span style={{ fontWeight: 700 }}>
+            <span className={preview.avgDispersion === 0 ? "" : preview.avgDispersion < 0 ? "text-left" : "text-right"}>
               {preview.avgDispersion === 0
                 ? "Straight"
                 : `${Math.abs(preview.avgDispersion)} yd ${preview.avgDispersion < 0 ? "left" : "right"}`}

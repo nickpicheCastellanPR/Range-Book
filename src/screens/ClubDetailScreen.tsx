@@ -1,6 +1,8 @@
 import { SWING_LENGTHS, type AppData, type SwingLength } from "../types";
 import { computeClubStats, getSessionTrimmedAverage } from "../lib/stats";
 import { TrendChart } from "../components/TrendChart";
+import { WaveDivider } from "../components/art/WaveDivider";
+import { CompassRose } from "../components/art/CompassRose";
 
 export function ClubDetailScreen({
   data,
@@ -27,6 +29,7 @@ export function ClubDetailScreen({
       </button>
 
       <h2 style={{ fontSize: 22 }}>{club.name}</h2>
+      <WaveDivider />
 
       {SWING_LENGTHS.map((sl) => {
         const stats = computeClubStats(club, sl.key as SwingLength, data.sessions);
@@ -36,6 +39,7 @@ export function ClubDetailScreen({
 
         return (
           <div className="card" key={sl.key}>
+            {stats && <CompassRose size={110} className="compass-watermark" />}
             <div className="card-title">
               {sl.label} · {sl.clock}
             </div>
@@ -60,7 +64,7 @@ export function ClubDetailScreen({
                 </div>
                 <div className="row" style={{ marginTop: 10 }}>
                   <span className="text-dim">Avg dispersion</span>
-                  <span style={{ fontWeight: 700 }}>
+                  <span className={stats.avgDispersion === 0 ? "" : stats.avgDispersion < 0 ? "text-left" : "text-right"}>
                     {stats.avgDispersion === 0
                       ? "Straight"
                       : `${Math.abs(stats.avgDispersion)} yd ${stats.avgDispersion < 0 ? "left" : "right"}`}

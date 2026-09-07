@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import type { AppData } from "./types";
 import { loadData, saveData } from "./lib/storage";
 import { BottomNav, type Screen } from "./components/BottomNav";
+import { KrakenMark } from "./components/art/KrakenMark";
+import { WaveDivider } from "./components/art/WaveDivider";
 import { BagScreen } from "./screens/BagScreen";
 import { LogSessionScreen } from "./screens/LogSessionScreen";
 import { ClubDetailScreen } from "./screens/ClubDetailScreen";
@@ -32,6 +34,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="app-header">
+        <KrakenMark size={34} />
         <h1>
           {openClubId
             ? "Club Detail"
@@ -40,6 +43,7 @@ export default function App() {
               : TITLES[screen]}
         </h1>
       </header>
+      <WaveDivider />
 
       <main className="app-main">
         {screen === "bag" &&

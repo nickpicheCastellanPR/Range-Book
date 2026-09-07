@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { LIES, SWING_LENGTHS, type AppData, type Lie } from "../types";
 import { getRecommendations } from "../lib/recommend";
+import { CompassRose } from "../components/art/CompassRose";
 
 export function RangefinderScreen({ data }: { data: AppData }) {
   const [distance, setDistance] = useState("");
@@ -22,6 +23,7 @@ export function RangefinderScreen({ data }: { data: AppData }) {
   return (
     <div className="stack">
       <div className="card">
+        <CompassRose size={130} className="compass-watermark" />
         <div className="card-title">Shot</div>
         <div className="stack">
           <div className="field">
@@ -67,8 +69,8 @@ export function RangefinderScreen({ data }: { data: AppData }) {
 
       {Number.isFinite(distanceNum) && recommendations.length === 0 && (
         <div className="empty-state">
-          <div className="icon">📭</div>
-          <p>No logged sessions yet — log a range session first.</p>
+          <CompassRose size={100} className="art" style={{ opacity: 0.5 }} />
+          <p>No bearing yet — log a range session first.</p>
         </div>
       )}
 
@@ -91,8 +93,14 @@ export function RangefinderScreen({ data }: { data: AppData }) {
                 : rec.diffFromTarget > 0
                   ? `${rec.diffFromTarget} yd long`
                   : `${Math.abs(rec.diffFromTarget)} yd short`}
-              {rec.baseStats.avgDispersion !== 0 &&
-                ` · tends ${Math.abs(rec.baseStats.avgDispersion)} yd ${rec.baseStats.avgDispersion < 0 ? "left" : "right"}`}
+              {rec.baseStats.avgDispersion !== 0 && (
+                <>
+                  {" · tends "}
+                  <span className={rec.baseStats.avgDispersion < 0 ? "text-left" : "text-right"}>
+                    {Math.abs(rec.baseStats.avgDispersion)} yd {rec.baseStats.avgDispersion < 0 ? "left" : "right"}
+                  </span>
+                </>
+              )}
             </div>
           </div>
         </div>

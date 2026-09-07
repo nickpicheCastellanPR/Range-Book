@@ -1,18 +1,45 @@
 <svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#1b2620"/>
-      <stop offset="1" stop-color="#0f1613"/>
+      <stop offset="0" stop-color="#1c2f40"/>
+      <stop offset="1" stop-color="#0b131c"/>
     </linearGradient>
+    <clipPath id="clip"><rect width="512" height="512" rx="112"/></clipPath>
   </defs>
-  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
-  <circle cx="256" cy="220" r="92" fill="#eef2ee"/>
-  <circle cx="228" cy="190" r="6" fill="#c8d2c9"/>
-  <circle cx="270" cy="200" r="6" fill="#c8d2c9"/>
-  <circle cx="290" cy="240" r="6" fill="#c8d2c9"/>
-  <circle cx="240" cy="250" r="6" fill="#c8d2c9"/>
-  <circle cx="256" cy="220" r="6" fill="#c8d2c9"/>
-  <rect x="248" y="312" width="16" height="150" rx="8" fill="#4ade80"/>
-  <path d="M264 312 L 380 340 L 264 368 Z" fill="#4ade80"/>
-  <ellipse cx="256" cy="466" rx="100" ry="14" fill="#2a382f"/>
+
+  <g clip-path="url(#clip)">
+    <rect width="512" height="512" fill="url(#bg)"/>
+
+    <!-- kraken -->
+    <g transform="translate(76,34) scale(1.8)" stroke-linecap="round" stroke-linejoin="round">
+      <g fill="none">
+        <path d="M66,108 C44,118 24,112 18,90 C13,72 24,56 42,54" stroke="#08111a" stroke-width="15"/>
+        <path d="M66,108 C44,118 24,112 18,90 C13,72 24,56 42,54" stroke="#3fb6a5" stroke-width="8"/>
+        <path d="M80,124 C64,148 62,176 82,190 C92,197 103,192 100,180" stroke="#08111a" stroke-width="15"/>
+        <path d="M80,124 C64,148 62,176 82,190 C92,197 103,192 100,180" stroke="#3fb6a5" stroke-width="8"/>
+        <path d="M100,128 C99,156 92,182 106,196" stroke="#08111a" stroke-width="15"/>
+        <path d="M100,128 C99,156 92,182 106,196" stroke="#4fd8c4" stroke-width="8"/>
+        <path d="M120,124 C136,148 138,176 118,190 C108,197 97,192 100,180" stroke="#08111a" stroke-width="15"/>
+        <path d="M120,124 C136,148 138,176 118,190 C108,197 97,192 100,180" stroke="#3fb6a5" stroke-width="8"/>
+        <path d="M134,108 C156,118 176,112 182,90 C187,72 176,56 158,54" stroke="#08111a" stroke-width="15"/>
+        <path d="M134,108 C156,118 176,112 182,90 C187,72 176,56 158,54" stroke="#3fb6a5" stroke-width="8"/>
+      </g>
+      <path d="M100,20 C132,20 150,46 147,76 C145,98 128,116 100,120 C72,116 55,98 53,76 C50,46 68,20 100,20 Z" fill="#5fe0cd" stroke="#08111a" stroke-width="8"/>
+      <path d="M100,20 C132,20 150,46 147,76 C145,98 128,116 100,120 L100,20 Z" fill="#39a596" opacity="0.55"/>
+      <path d="M66,66 C76,58 88,58 96,64" fill="none" stroke="#08111a" stroke-width="6"/>
+      <path d="M134,66 C124,58 112,58 104,64" fill="none" stroke="#08111a" stroke-width="6"/>
+      <ellipse cx="80" cy="78" rx="12" ry="16" transform="rotate(-18 80 78)" fill="#ff7a2e" stroke="#08111a" stroke-width="5"/>
+      <ellipse cx="120" cy="78" rx="12" ry="16" transform="rotate(18 120 78)" fill="#ff7a2e" stroke="#08111a" stroke-width="5"/>
+      <circle cx="80" cy="80" r="3.5" fill="#08111a"/>
+      <circle cx="120" cy="80" r="3.5" fill="#08111a"/>
+      <path d="M92,96 L108,96 L100,107 Z" fill="#08111a"/>
+    </g>
+
+    <!-- wave footer -->
+    <g transform="translate(0,404)">
+      <path d="M0,44 C40,10 80,10 120,44 C160,78 200,78 240,44 C280,10 320,10 360,44 C400,78 440,78 480,44 L512,44 L512,108 L0,108 Z" fill="#1c4d47"/>
+      <path d="M0,34 C40,0 80,0 120,34 C160,68 200,68 240,34 C280,0 320,0 360,34 C400,68 440,68 480,34 L512,34 L512,108 L0,108 Z" fill="#4fd8c4"/>
+      <path d="M0,34 C40,0 80,0 120,34 C160,68 200,68 240,34 C280,0 320,0 360,34 C400,68 440,68 480,34" fill="none" stroke="#dff4f0" stroke-width="5" stroke-linecap="round"/>
+    </g>
+  </g>
 </svg>

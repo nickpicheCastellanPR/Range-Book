@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { AppData, Club } from "../types";
 import { generateId } from "../lib/math";
+import { TentacleClub } from "../components/art/TentacleClub";
 
 export function BagScreen({
   data,
@@ -77,38 +78,36 @@ export function BagScreen({
 
       {active.length === 0 && (
         <div className="empty-state">
-          <div className="icon">🏌️</div>
-          <p>Your bag is empty. Add your first club above.</p>
+          <TentacleClub className="art" />
+          <p>The depths are empty. Add your first club above.</p>
         </div>
       )}
 
       {active.map((club) => (
         <div className="card" key={club.id}>
-          <div className="row">
-            <button
-              onClick={() => onOpenClub(club.id)}
-              style={{
-                background: "none",
-                border: "none",
-                textAlign: "left",
-                flex: 1,
-                padding: 0,
-              }}
-            >
-              <div style={{ fontSize: 16, fontWeight: 600 }}>{club.name}</div>
-              <div className="text-faint">Tap to view distances & trends</div>
+          <button
+            onClick={() => onOpenClub(club.id)}
+            style={{
+              background: "none",
+              border: "none",
+              textAlign: "left",
+              width: "100%",
+              padding: 0,
+            }}
+          >
+            <div style={{ fontSize: 16, fontWeight: 600 }}>{club.name}</div>
+            <div className="text-faint">Tap to view distances & trends</div>
+          </button>
+          <div className="row" style={{ marginTop: 10, gap: 6 }}>
+            <button className="btn btn-ghost btn-icon" onClick={() => move(club, -1)} aria-label="Move up">
+              ↑
             </button>
-            <div className="row" style={{ gap: 6, width: "auto" }}>
-              <button className="btn btn-ghost" onClick={() => move(club, -1)}>
-                ↑
-              </button>
-              <button className="btn btn-ghost" onClick={() => move(club, 1)}>
-                ↓
-              </button>
-              <button className="btn btn-ghost" onClick={() => toggleActive(club)}>
-                Retire
-              </button>
-            </div>
+            <button className="btn btn-ghost btn-icon" onClick={() => move(club, 1)} aria-label="Move down">
+              ↓
+            </button>
+            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => toggleActive(club)}>
+              Retire
+            </button>
           </div>
         </div>
       ))}
