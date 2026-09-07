@@ -1,6 +1,8 @@
 import { useState } from "react";
+import type { ChangeEvent } from "react";
 import type { AppData, Club } from "../types";
 import { generateId } from "../lib/math";
+import { CLUB_PRESETS } from "../lib/clubPresets";
 import { TentacleClub } from "../components/art/TentacleClub";
 
 export function BagScreen({
@@ -18,18 +20,29 @@ export function BagScreen({
   const active = clubs.filter((c) => c.active);
   const retired = clubs.filter((c) => !c.active);
 
-  function addClub() {
-    const name = newName.trim();
-    if (!name) return;
+  function addClubNamed(name: string) {
+    const trimmed = name.trim();
+    if (!trimmed) return;
     const club: Club = {
       id: generateId(),
-      name,
+      name: trimmed,
       order: (data.clubs.reduce((max, c) => Math.max(max, c.order), -1) ?? -1) + 1,
       active: true,
       createdAt: new Date().toISOString(),
     };
     onUpdate({ ...data, clubs: [...data.clubs, club] });
+  }
+
+  function addClub() {
+    addClubNamed(newName);
     setNewName("");
+  }
+
+  function addFromPreset(e: ChangeEvent<HTMLSelectElement>) {
+    const name = e.target.value;
+    if (!name) return;
+    addClubNamed(name);
+    e.target.value = "";
   }
 
   function toggleActive(club: Club) {
@@ -62,17 +75,34 @@ export function BagScreen({
     <div className="stack">
       <div className="card">
         <div className="card-title">Add a club</div>
-        <div className="row" style={{ gap: 8 }}>
-          <input
-            placeholder="e.g. 7 Iron"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addClub()}
-            style={{ flex: 1 }}
-          />
-          <button className="btn btn-primary" onClick={addClub}>
-            Add
-          </button>
+        <div className="stack">
+          <select defaultValue="" onChange={addFromPreset}>
+            <option value="" disabled>
+              Quick add from bag list…
+            </option>
+            {CLUB_PRESETS.map((group) => (
+              <optgroup key={group.group} label={group.group}>
+                {group.options.map((name) => (
+                  <option key={name} value={name}>
+                    {name}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </select>
+
+          <div className="row" style={{ gap: 8 }}>
+            <input
+              placeholder="Or type a custom name…"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && addClub()}
+              style={{ flex: 1 }}
+            />
+            <button className="btn btn-primary" onClick={addClub}>
+              Add
+            </button>
+          </div>
         </div>
       </div>
 
