@@ -5,17 +5,30 @@ import { CompassRose } from "../components/art/CompassRose";
 
 export function RangefinderScreen({ data }: { data: AppData }) {
   const [distance, setDistance] = useState("");
+  const [minCarry, setMinCarry] = useState("");
   const [tempF, setTempF] = useState("");
   const [lie, setLie] = useState<Lie>("fairway");
 
   const distanceNum = parseFloat(distance);
   const tempNum = tempF.trim() === "" ? undefined : parseFloat(tempF);
+  const minCarryNum = minCarry.trim() === "" ? undefined : parseFloat(minCarry);
 
   const recommendations = useMemo(() => {
     if (!Number.isFinite(distanceNum)) return [];
-    return getRecommendations(data, { distance: distanceNum, tempF: tempNum, lie }).slice(0, 8);
+    return getRecommendations(data, {
+      distance: distanceNum,
+      tempF: tempNum,
+      lie,
+      minCarry: minCarryNum,
+    }).slice(0, 8);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [distanceNum, tempNum, lie, data]);
+  }, [distanceNum, tempNum, minCarryNum, lie, data]);
+
+  const hazardBlocked =
+    Number.isFinite(distanceNum) &&
+    recommendations.length === 0 &&
+    minCarryNum !== undefined &&
+    minCarryNum > 0;
 
   const swingLabel = (key: string) =>
     SWING_LENGTHS.find((s) => s.key === key)?.label ?? key;
@@ -33,6 +46,15 @@ export function RangefinderScreen({ data }: { data: AppData }) {
               placeholder="e.g. 152"
               value={distance}
               onChange={(e) => setDistance(e.target.value)}
+            />
+          </div>
+          <div className="field">
+            <label>Must carry (yd, optional — bunker, water, rough)</label>
+            <input
+              inputMode="decimal"
+              placeholder="e.g. 140"
+              value={minCarry}
+              onChange={(e) => setMinCarry(e.target.value)}
             />
           </div>
           <div className="field">
@@ -70,7 +92,11 @@ export function RangefinderScreen({ data }: { data: AppData }) {
       {Number.isFinite(distanceNum) && recommendations.length === 0 && (
         <div className="empty-state">
           <CompassRose size={100} className="art" style={{ opacity: 0.5 }} />
-          <p>No bearing yet — log a range session first.</p>
+          <p>
+            {hazardBlocked
+              ? `Nothing in your bag carries ${minCarryNum} yd in this lie — you'd need to lay up short of it.`
+              : "No bearing yet — log a range session first."}
+          </p>
         </div>
       )}
 
@@ -93,6 +119,9 @@ export function RangefinderScreen({ data }: { data: AppData }) {
                 : rec.diffFromTarget > 0
                   ? `${rec.diffFromTarget} yd long`
                   : `${Math.abs(rec.diffFromTarget)} yd short`}
+              {rec.carryMargin !== undefined && (
+                <span className="text-left"> · clears by {rec.carryMargin} yd</span>
+              )}
               {rec.baseStats.avgDispersion !== 0 && (
                 <>
                   {" · tends "}

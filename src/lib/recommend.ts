@@ -8,6 +8,8 @@ export interface Conditions {
   /** current temp in F; omit to skip temp adjustment */
   tempF?: number;
   lie: Lie;
+  /** yards that must be carried in the air (bunker, water, rough) — clubs that don't clear it are excluded */
+  minCarry?: number;
 }
 
 export interface Recommendation {
@@ -20,6 +22,8 @@ export interface Recommendation {
   adjustedTotal: number;
   adjustedRollout: number;
   diffFromTarget: number;
+  /** adjustedCarry - minCarry, only set when a carry requirement was given */
+  carryMargin?: number;
 }
 
 /** Adjusts a club's baseline carry/total for temperature and lie. */
@@ -59,6 +63,9 @@ export function getRecommendations(
       if (!stats) continue;
 
       const adjusted = adjustForConditions(stats, conditions, data.settings);
+      const hasMinCarry = conditions.minCarry !== undefined && conditions.minCarry > 0;
+      if (hasMinCarry && adjusted.carry < (conditions.minCarry as number)) continue;
+
       results.push({
         clubId: club.id,
         clubName: club.name,
@@ -69,6 +76,7 @@ export function getRecommendations(
         adjustedTotal: adjusted.total,
         adjustedRollout: round1(adjusted.total - adjusted.carry),
         diffFromTarget: round1(adjusted.total - conditions.distance),
+        carryMargin: hasMinCarry ? round1(adjusted.carry - (conditions.minCarry as number)) : undefined,
       });
     }
   }
