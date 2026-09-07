@@ -30,6 +30,9 @@ export function RangefinderScreen({ data }: { data: AppData }) {
   const swingLabel = (key: string) =>
     SWING_LENGTHS.find((s) => s.key === key)?.label ?? key;
 
+  const liePct = data.settings.lieAdjustments[lie] ?? 0;
+  const pctLabel = (pct: number) => `${pct > 0 ? "+" : ""}${pct}%`;
+
   return (
     <div className="stack">
       <div className="card">
@@ -57,16 +60,25 @@ export function RangefinderScreen({ data }: { data: AppData }) {
           <div className="field">
             <label>Lie</label>
             <div className="pill-group">
-              {LIES.map((l) => (
-                <button
-                  key={l.key}
-                  className={`pill${lie === l.key ? " active" : ""}`}
-                  onClick={() => setLie(l.key)}
-                >
-                  {l.label}
-                </button>
-              ))}
+              {LIES.map((l) => {
+                const pct = data.settings.lieAdjustments[l.key] ?? 0;
+                return (
+                  <button
+                    key={l.key}
+                    className={`pill${lie === l.key ? " active" : ""}`}
+                    onClick={() => setLie(l.key)}
+                  >
+                    {l.label}
+                    {pct !== 0 && ` ${pctLabel(pct)}`}
+                  </button>
+                );
+              })}
             </div>
+            {liePct !== 0 && (
+              <p className="text-faint" style={{ marginTop: 2 }}>
+                Every carry & total below is already reduced {Math.abs(liePct)}% for {LIES.find((l) => l.key === lie)?.label.toLowerCase()}.
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -101,6 +113,11 @@ export function RangefinderScreen({ data }: { data: AppData }) {
                 Carry {rec.adjustedCarry} · Total {rec.adjustedTotal} · Roll {rec.adjustedRollout}
               </span>
             </div>
+            {liePct !== 0 && (
+              <div className="text-faint" style={{ marginTop: 1, opacity: 0.75 }}>
+                Fairway: {rec.baseStats.avgCarry} carry · {rec.baseStats.avgTotal} total
+              </div>
+            )}
             <div className="text-faint" style={{ marginTop: 2 }}>
               {rec.diffFromTarget === 0
                 ? "Exact fit"
