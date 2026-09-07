@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "apple-touch-icon.png"],
       manifest: {
-        name: "Range Book",
-        short_name: "Range Book",
-        description: "Personal golf range book — club distances, dispersion, and on-course club selection.",
+        name: "Fathom",
+        short_name: "Fathom",
+        description: "Fathom — a personal golf range book: club distances, dispersion, and on-course club selection.",
         theme_color: "#0b131c",
         background_color: "#0b131c",
         display: "standalone",

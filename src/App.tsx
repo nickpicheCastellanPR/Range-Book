@@ -45,7 +45,7 @@ export default function App() {
             : screen === "settings" && showAbout
               ? "About"
               : screen === "bag"
-                ? "Range Book"
+                ? "Fathom"
                 : TITLES[screen]}
         </h1>
       </header>

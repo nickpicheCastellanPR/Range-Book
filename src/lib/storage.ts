@@ -37,7 +37,7 @@ export function exportData(data: AppData): void {
   const a = document.createElement("a");
   const stamp = new Date().toISOString().slice(0, 10);
   a.href = url;
-  a.download = `range-book-backup-${stamp}.json`;
+  a.download = `fathom-backup-${stamp}.json`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -83,7 +83,7 @@ export function exportCsv(data: AppData): void {
   const a = document.createElement("a");
   const stamp = new Date().toISOString().slice(0, 10);
   a.href = url;
-  a.download = `range-book-swings-${stamp}.csv`;
+  a.download = `fathom-swings-${stamp}.csv`;
   a.click();
   URL.revokeObjectURL(url);
 }
@@ -91,7 +91,7 @@ export function exportCsv(data: AppData): void {
 export function parseImportedFile(text: string): AppData {
   const parsed = JSON.parse(text) as Partial<AppData>;
   if (!parsed || !Array.isArray(parsed.clubs) || !Array.isArray(parsed.sessions)) {
-    throw new Error("That file doesn't look like a Range Book backup.");
+    throw new Error("That file doesn't look like a Fathom backup.");
   }
   return normalize(parsed);
 }

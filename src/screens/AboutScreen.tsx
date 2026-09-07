@@ -7,7 +7,7 @@ export function AboutScreen({ onBack }: { onBack: () => void }) {
         ← Back to settings
       </button>
 
-      <h2 style={{ fontSize: 22 }}>About Range Book</h2>
+      <h2 style={{ fontSize: 22 }}>About Fathom</h2>
       <WaveDivider />
 
       <p className="text-dim">
