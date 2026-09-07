@@ -16,6 +16,31 @@ export function SettingsScreen({
   const fileInput = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
   const [confirmImport, setConfirmImport] = useState<AppData | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const appUrl = `${window.location.origin}${import.meta.env.BASE_URL}`;
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(appUrl);
+    } catch {
+      const ta = document.createElement("textarea");
+      ta.value = appUrl;
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try {
+        document.execCommand("copy");
+      } catch {
+        // clipboard unavailable — the visible input below still lets them select/copy manually
+      }
+      document.body.removeChild(ta);
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   function updateSettings(patch: Partial<AppData["settings"]>) {
     onUpdate({ ...data, settings: { ...data.settings, ...patch } });
@@ -44,6 +69,17 @@ export function SettingsScreen({
 
   return (
     <div className="stack">
+      <div className="card">
+        <div className="card-title">Share</div>
+        <p className="text-dim">
+          Send this link to a friend — they'll get their own separate, empty bag on their device.
+        </p>
+        <input readOnly value={appUrl} style={{ marginTop: 8 }} onFocus={(e) => e.target.select()} />
+        <button className="btn btn-block" style={{ marginTop: 8 }} onClick={copyLink}>
+          {copied ? "Copied!" : "Copy link"}
+        </button>
+      </div>
+
       <div className="card">
         <div className="card-title">Help</div>
         <button className="btn btn-block" onClick={onShowAbout}>
