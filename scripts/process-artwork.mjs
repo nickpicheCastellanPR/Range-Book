@@ -43,6 +43,9 @@ async function main() {
     .toFile(path.join(iconsDir, "icon-maskable-512.png"));
   await sharp(icon).resize(128, 128).png(pngOpts).toFile(path.join(iconsDir, "header-mark.png"));
 
+  // --- App-wide background texture ---
+  await sharp(texture).resize(900).jpeg({ quality: 78 }).toFile(path.join(artDir, "texture-bg.jpg"));
+
   // --- Hero image (About screen), kept as a clean rounded card, not masked ---
   await sharp(hero).resize(700, 700, { fit: "inside" }).jpeg({ quality: 88 }).toFile(path.join(artDir, "hero.jpg"));
 
