@@ -189,7 +189,7 @@ export function BagScreen({
       )}
 
       {groupedActive.map(({ group, clubs: groupClubs }) => (
-        <details key={group} className="club-group" open>
+        <details key={group} className="club-group">
           <summary className="club-group-summary">
             <span className="chevron">▶</span>
             {group}
