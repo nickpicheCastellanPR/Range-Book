@@ -3,7 +3,7 @@ import type { ChangeEvent } from "react";
 import type { AppData, Club } from "../types";
 import { generateId } from "../lib/math";
 import { CLUB_PRESETS } from "../lib/clubPresets";
-import { classifyClub, groupOrderIndex } from "../lib/clubGrouping";
+import { groupClubs } from "../lib/clubGrouping";
 import { TentacleClub } from "../components/art/TentacleClub";
 
 export function BagScreen({
@@ -21,20 +21,7 @@ export function BagScreen({
   const active = clubs.filter((c) => c.active);
   const retired = clubs.filter((c) => !c.active);
 
-  const groupedActive = useMemo(() => {
-    const withMeta = active.map((club) => ({ club, ...classifyClub(club.name) }));
-    const byGroup = new Map<string, typeof withMeta>();
-    for (const item of withMeta) {
-      if (!byGroup.has(item.group)) byGroup.set(item.group, []);
-      byGroup.get(item.group)!.push(item);
-    }
-    for (const list of byGroup.values()) {
-      list.sort((a, b) => a.sortIndex - b.sortIndex || a.club.order - b.club.order);
-    }
-    return [...byGroup.entries()]
-      .sort((a, b) => groupOrderIndex(a[0]) - groupOrderIndex(b[0]))
-      .map(([group, items]) => ({ group, clubs: items.map((i) => i.club) }));
-  }, [active]);
+  const groupedActive = useMemo(() => groupClubs(active), [active]);
 
   function addClubNamed(name: string) {
     const trimmed = name.trim();

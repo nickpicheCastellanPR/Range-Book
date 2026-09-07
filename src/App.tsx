@@ -9,6 +9,7 @@ import { LogSessionScreen } from "./screens/LogSessionScreen";
 import { ClubDetailScreen } from "./screens/ClubDetailScreen";
 import { RangefinderScreen } from "./screens/RangefinderScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
+import { AboutScreen } from "./screens/AboutScreen";
 
 const TITLES: Record<Screen, string> = {
   bag: "My Bag",
@@ -21,6 +22,7 @@ export default function App() {
   const [data, setData] = useState<AppData>(() => loadData());
   const [screen, setScreen] = useState<Screen>("bag");
   const [openClubId, setOpenClubId] = useState<string | null>(null);
+  const [showAbout, setShowAbout] = useState(false);
 
   useEffect(() => {
     saveData(data);
@@ -28,6 +30,7 @@ export default function App() {
 
   function goTo(next: Screen) {
     setOpenClubId(null);
+    setShowAbout(false);
     setScreen(next);
   }
 
@@ -38,9 +41,11 @@ export default function App() {
         <h1>
           {openClubId
             ? "Club Detail"
-            : screen === "bag"
-              ? "Range Book"
-              : TITLES[screen]}
+            : screen === "settings" && showAbout
+              ? "About"
+              : screen === "bag"
+                ? "Range Book"
+                : TITLES[screen]}
         </h1>
       </header>
       <WaveDivider />
@@ -62,9 +67,17 @@ export default function App() {
 
         {screen === "rangefinder" && <RangefinderScreen data={data} />}
 
-        {screen === "settings" && (
-          <SettingsScreen data={data} onUpdate={setData} onReplaceAll={setData} />
-        )}
+        {screen === "settings" &&
+          (showAbout ? (
+            <AboutScreen onBack={() => setShowAbout(false)} />
+          ) : (
+            <SettingsScreen
+              data={data}
+              onUpdate={setData}
+              onReplaceAll={setData}
+              onShowAbout={() => setShowAbout(true)}
+            />
+          ))}
       </main>
 
       <BottomNav active={screen} onChange={goTo} />

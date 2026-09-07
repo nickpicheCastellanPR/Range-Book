@@ -39,6 +39,39 @@ export function computeClubStats(
   };
 }
 
+export interface MaxCarry {
+  carry: number;
+  total: number;
+  date: string;
+}
+
+/**
+ * Longest single carry ever recorded for this club/swing-length, pulled
+ * from the raw swings (including ones the trimmed average drops as
+ * outliers) — this is deliberately the "if you really catch one" number,
+ * not a typical-shot number.
+ */
+export function getMaxCarry(
+  club: Club,
+  swingLength: SwingLength,
+  sessions: RangeSession[],
+): MaxCarry | null {
+  const relevant = sessions.filter(
+    (s) => s.clubId === club.id && s.swingLength === swingLength,
+  );
+  if (relevant.length === 0) return null;
+
+  let best: MaxCarry | null = null;
+  for (const session of relevant) {
+    for (const swing of session.swings) {
+      if (!best || swing.carry > best.carry) {
+        best = { carry: swing.carry, total: swing.total, date: session.date };
+      }
+    }
+  }
+  return best;
+}
+
 export function getSessionTrimmedAverage(session: RangeSession) {
   const kept = session.keptIndexes.map((i) => session.swings[i]);
   return {

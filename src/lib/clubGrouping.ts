@@ -1,3 +1,4 @@
+import type { Club } from "../types";
 import { CLUB_PRESETS } from "./clubPresets";
 
 export const GROUP_ORDER = ["Woods", "Hybrids", "Irons", "Wedges", "Putter", "Other"];
@@ -35,4 +36,25 @@ export function classifyClub(name: string): { group: string; sortIndex: number }
 export function groupOrderIndex(group: string): number {
   const i = GROUP_ORDER.indexOf(group);
   return i === -1 ? GROUP_ORDER.length : i;
+}
+
+export interface ClubGroupBucket {
+  group: string;
+  clubs: Club[];
+}
+
+/** Buckets clubs into Woods/Hybrids/Irons/Wedges/Putter/Other, each sorted by loft/type position. */
+export function groupClubs(clubs: Club[]): ClubGroupBucket[] {
+  const withMeta = clubs.map((club) => ({ club, ...classifyClub(club.name) }));
+  const byGroup = new Map<string, typeof withMeta>();
+  for (const item of withMeta) {
+    if (!byGroup.has(item.group)) byGroup.set(item.group, []);
+    byGroup.get(item.group)!.push(item);
+  }
+  for (const list of byGroup.values()) {
+    list.sort((a, b) => a.sortIndex - b.sortIndex || a.club.order - b.club.order);
+  }
+  return [...byGroup.entries()]
+    .sort((a, b) => groupOrderIndex(a[0]) - groupOrderIndex(b[0]))
+    .map(([group, items]) => ({ group, clubs: items.map((i) => i.club) }));
 }

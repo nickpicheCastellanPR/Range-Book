@@ -6,10 +6,12 @@ export function SettingsScreen({
   data,
   onUpdate,
   onReplaceAll,
+  onShowAbout,
 }: {
   data: AppData;
   onUpdate: (next: AppData) => void;
   onReplaceAll: (next: AppData) => void;
+  onShowAbout: () => void;
 }) {
   const fileInput = useRef<HTMLInputElement>(null);
   const [importError, setImportError] = useState<string | null>(null);
@@ -42,6 +44,13 @@ export function SettingsScreen({
 
   return (
     <div className="stack">
+      <div className="card">
+        <div className="card-title">Help</div>
+        <button className="btn btn-block" onClick={onShowAbout}>
+          About & how to use this app
+        </button>
+      </div>
+
       <div className="card">
         <div className="card-title">Lie adjustment (% carry)</div>
         <div className="stack">

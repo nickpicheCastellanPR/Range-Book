@@ -1,5 +1,5 @@
 import { SWING_LENGTHS, type AppData, type SwingLength } from "../types";
-import { computeClubStats, getSessionTrimmedAverage } from "../lib/stats";
+import { computeClubStats, getMaxCarry, getSessionTrimmedAverage } from "../lib/stats";
 import { TrendChart } from "../components/TrendChart";
 import { WaveDivider } from "../components/art/WaveDivider";
 import { CompassRose } from "../components/art/CompassRose";
@@ -33,6 +33,7 @@ export function ClubDetailScreen({
 
       {SWING_LENGTHS.map((sl) => {
         const stats = computeClubStats(club, sl.key as SwingLength, data.sessions);
+        const maxCarry = getMaxCarry(club, sl.key as SwingLength, data.sessions);
         const sessions = data.sessions
           .filter((s) => s.clubId === club.id && s.swingLength === sl.key)
           .sort((a, b) => a.date.localeCompare(b.date));
@@ -70,6 +71,14 @@ export function ClubDetailScreen({
                       : `${Math.abs(stats.avgDispersion)} yd ${stats.avgDispersion < 0 ? "left" : "right"}`}
                   </span>
                 </div>
+                {maxCarry && (
+                  <div className="row" style={{ marginTop: 6 }}>
+                    <span className="text-dim">🚀 Longest carry</span>
+                    <span style={{ fontWeight: 700, color: "var(--danger)" }}>
+                      {maxCarry.carry} yd
+                    </span>
+                  </div>
+                )}
                 <p className="text-faint" style={{ marginTop: 4 }}>
                   From {stats.sessionCount} session{stats.sessionCount === 1 ? "" : "s"}
                 </p>

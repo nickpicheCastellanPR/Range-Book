@@ -1,4 +1,5 @@
 import type { Club } from "../types";
+import { groupClubs } from "../lib/clubGrouping";
 
 export function ClubPicker({
   clubs,
@@ -11,9 +12,8 @@ export function ClubPicker({
   onChange: (clubId: string) => void;
   includeInactive?: boolean;
 }) {
-  const list = clubs
-    .filter((c) => includeInactive || c.active)
-    .sort((a, b) => a.order - b.order);
+  const filtered = clubs.filter((c) => includeInactive || c.active);
+  const groups = groupClubs(filtered);
 
   return (
     <select
@@ -24,11 +24,15 @@ export function ClubPicker({
       <option value="" disabled>
         Select a club…
       </option>
-      {list.map((c) => (
-        <option key={c.id} value={c.id}>
-          {c.name}
-          {!c.active ? " (retired)" : ""}
-        </option>
+      {groups.map(({ group, clubs: groupClubList }) => (
+        <optgroup key={group} label={group}>
+          {groupClubList.map((c) => (
+            <option key={c.id} value={c.id}>
+              {c.name}
+              {!c.active ? " (retired)" : ""}
+            </option>
+          ))}
+        </optgroup>
       ))}
     </select>
   );

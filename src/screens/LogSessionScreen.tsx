@@ -70,9 +70,16 @@ export function LogSessionScreen({
   }
 
   const club = data.clubs.find((c) => c.id === clubId);
+  const hasActiveClubs = data.clubs.some((c) => c.active);
 
   return (
     <div className="stack">
+      {!hasActiveClubs && (
+        <p className="text-faint" style={{ textAlign: "center", marginTop: 8 }}>
+          You haven't added any clubs yet — head to the Bag tab first.
+        </p>
+      )}
+
       <div className="card">
         <div className="card-title">Club</div>
         <ClubPicker clubs={data.clubs} value={clubId} onChange={setClubId} />
@@ -87,6 +94,9 @@ export function LogSessionScreen({
         <div className="card-title">
           10 swings · carry / total / dispersion (yd, − left / + right)
         </div>
+        <p className="text-faint" style={{ marginTop: -4, marginBottom: 10 }}>
+          We drop your 2 shortest and 2 longest carries and average the remaining 6 — one chunk or one flush strike won't skew your number.
+        </p>
         <div className="stack" style={{ gap: 0 }}>
           {swings.map((s, i) => {
             const dropped = preview?.droppedIndexes.includes(i);
