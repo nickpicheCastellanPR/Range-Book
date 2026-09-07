@@ -16,6 +16,8 @@ export function BagScreen({
   onOpenClub: (clubId: string) => void;
 }) {
   const [newName, setNewName] = useState("");
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState("");
 
   const clubs = [...data.clubs].sort((a, b) => a.order - b.order);
   const active = clubs.filter((c) => c.active);
@@ -71,6 +73,77 @@ export function BagScreen({
     });
   }
 
+  function startRename(club: Club) {
+    setRenamingId(club.id);
+    setRenameValue(club.name);
+  }
+
+  function commitRename() {
+    const trimmed = renameValue.trim();
+    if (trimmed && renamingId) {
+      onUpdate({
+        ...data,
+        clubs: data.clubs.map((c) => (c.id === renamingId ? { ...c, name: trimmed } : c)),
+      });
+    }
+    setRenamingId(null);
+  }
+
+  function renderClub(club: Club, variant: "active" | "retired") {
+    if (renamingId === club.id) {
+      return (
+        <div className="card" key={club.id}>
+          <div className="stack">
+            <input
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && commitRename()}
+              autoFocus
+            />
+            <div className="row" style={{ gap: 8 }}>
+              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setRenamingId(null)}>
+                Cancel
+              </button>
+              <button className="btn btn-primary" style={{ flex: 1 }} onClick={commitRename}>
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="card" key={club.id}>
+        <button
+          onClick={() => onOpenClub(club.id)}
+          style={{
+            background: "none",
+            border: "none",
+            textAlign: "left",
+            width: "100%",
+            padding: 0,
+            color: variant === "retired" ? "var(--text-dim)" : undefined,
+          }}
+        >
+          <div style={{ fontSize: 16, fontWeight: 600 }}>{club.name}</div>
+          {variant === "active" && <div className="text-faint">Tap to view distances & trends</div>}
+        </button>
+        <div className="row" style={{ marginTop: 10, gap: 6 }}>
+          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => startRename(club)}>
+            Rename
+          </button>
+          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => toggleActive(club)}>
+            {variant === "active" ? "Retire" : "Restore"}
+          </button>
+          <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => deleteClub(club)}>
+            Delete
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="stack">
       <div className="card">
@@ -123,31 +196,7 @@ export function BagScreen({
             </span>
           </summary>
           <div className="stack" style={{ marginTop: 8 }}>
-            {groupClubs.map((club) => (
-              <div className="card" key={club.id}>
-                <button
-                  onClick={() => onOpenClub(club.id)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    textAlign: "left",
-                    width: "100%",
-                    padding: 0,
-                  }}
-                >
-                  <div style={{ fontSize: 16, fontWeight: 600 }}>{club.name}</div>
-                  <div className="text-faint">Tap to view distances & trends</div>
-                </button>
-                <div className="row" style={{ marginTop: 10, gap: 6 }}>
-                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => toggleActive(club)}>
-                    Retire
-                  </button>
-                  <button className="btn btn-danger" style={{ flex: 1 }} onClick={() => deleteClub(club)}>
-                    Delete
-                  </button>
-                </div>
-              </div>
-            ))}
+            {groupClubs.map((club) => renderClub(club, "active"))}
           </div>
         </details>
       ))}
@@ -157,31 +206,7 @@ export function BagScreen({
           <div className="card-title" style={{ marginTop: 8 }}>
             Retired clubs
           </div>
-          {retired.map((club) => (
-            <div className="card" key={club.id}>
-              <div className="row">
-                <button
-                  onClick={() => onOpenClub(club.id)}
-                  style={{
-                    background: "none",
-                    border: "none",
-                    textAlign: "left",
-                    flex: 1,
-                    padding: 0,
-                    color: "var(--text-dim)",
-                  }}
-                >
-                  {club.name}
-                </button>
-                <button className="btn btn-ghost" onClick={() => toggleActive(club)}>
-                  Restore
-                </button>
-                <button className="btn btn-danger" onClick={() => deleteClub(club)}>
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+          {retired.map((club) => renderClub(club, "retired"))}
         </>
       )}
     </div>

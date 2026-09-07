@@ -48,6 +48,8 @@ export interface ClubStats {
   avgTotal: number;
   avgRollout: number;
   avgDispersion: number;
+  /** spread (stdev) of dispersion across sessions — how tight the miss pattern is */
+  avgDispersionSpread: number;
   sessionCount: number;
   lastUpdated: string;
 }

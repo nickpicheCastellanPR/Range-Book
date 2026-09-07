@@ -96,6 +96,19 @@ input:focus, select:focus {
   min-height: 0;
 }
 
+.install-banner {
+  background: var(--accent-dim);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  margin-bottom: 12px;
+}
+
+.install-banner p {
+  color: var(--text);
+  font-size: 14px;
+}
+
 .app-header {
   padding: calc(var(--safe-top) + 16px) 20px 0;
   display: flex;

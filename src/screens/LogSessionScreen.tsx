@@ -4,6 +4,7 @@ import { ClubPicker } from "../components/ClubPicker";
 import { SwingLengthPicker } from "../components/SwingLengthPicker";
 import { trimSwings } from "../lib/trimming";
 import { generateId } from "../lib/math";
+import { formatDispersion } from "../lib/dispersionText";
 
 interface DraftSwing {
   carry: string;
@@ -151,11 +152,10 @@ export function LogSessionScreen({
           </div>
           <div className="row" style={{ marginTop: 10 }}>
             <span className="text-dim">Avg dispersion</span>
-            <span className={preview.avgDispersion === 0 ? "" : preview.avgDispersion < 0 ? "text-left" : "text-right"}>
-              {preview.avgDispersion === 0
-                ? "Straight"
-                : `${Math.abs(preview.avgDispersion)} yd ${preview.avgDispersion < 0 ? "left" : "right"}`}
-            </span>
+            {(() => {
+              const d = formatDispersion(preview.avgDispersion, preview.dispersionSpread);
+              return <span className={d.className}>{d.text}</span>;
+            })()}
           </div>
         </div>
       )}

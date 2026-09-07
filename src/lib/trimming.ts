@@ -1,5 +1,5 @@
 import type { SwingEntry } from "../types";
-import { avg, round1 } from "./math";
+import { avg, round1, stdev } from "./math";
 
 export interface TrimResult {
   keptIndexes: number[];
@@ -8,6 +8,8 @@ export interface TrimResult {
   avgTotal: number;
   avgRollout: number;
   avgDispersion: number;
+  /** spread (stdev) of dispersion among the kept swings — how tight the pattern is */
+  dispersionSpread: number;
 }
 
 /**
@@ -40,5 +42,6 @@ export function trimSwings(swings: SwingEntry[]): TrimResult {
     avgTotal,
     avgRollout: round1(avgTotal - avgCarry),
     avgDispersion: round1(avg(kept.map((s) => s.dispersion))),
+    dispersionSpread: round1(stdev(kept.map((s) => s.dispersion))),
   };
 }

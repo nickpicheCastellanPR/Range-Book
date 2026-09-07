@@ -1,5 +1,6 @@
-import { SWING_LENGTHS, type AppData, type SwingLength } from "../types";
+import { SWING_LENGTHS, type AppData, type RangeSession, type SwingLength } from "../types";
 import { computeClubStats, getMaxCarry, getSessionTrimmedAverage } from "../lib/stats";
+import { formatDispersion } from "../lib/dispersionText";
 import { TrendChart } from "../components/TrendChart";
 import { WaveDivider } from "../components/art/WaveDivider";
 import { CompassRose } from "../components/art/CompassRose";
@@ -18,8 +19,10 @@ export function ClubDetailScreen({
   const club = data.clubs.find((c) => c.id === clubId);
   if (!club) return null;
 
-  function deleteSession(sessionId: string) {
-    onUpdate({ ...data, sessions: data.sessions.filter((s) => s.id !== sessionId) });
+  function deleteSession(session: RangeSession) {
+    const label = new Date(session.date).toLocaleDateString();
+    if (!window.confirm(`Delete the session logged on ${label}? This can't be undone.`)) return;
+    onUpdate({ ...data, sessions: data.sessions.filter((s) => s.id !== session.id) });
   }
 
   return (
@@ -65,15 +68,14 @@ export function ClubDetailScreen({
                 </div>
                 <div className="row" style={{ marginTop: 10 }}>
                   <span className="text-dim">Avg dispersion</span>
-                  <span className={stats.avgDispersion === 0 ? "" : stats.avgDispersion < 0 ? "text-left" : "text-right"}>
-                    {stats.avgDispersion === 0
-                      ? "Straight"
-                      : `${Math.abs(stats.avgDispersion)} yd ${stats.avgDispersion < 0 ? "left" : "right"}`}
-                  </span>
+                  {(() => {
+                    const d = formatDispersion(stats.avgDispersion, stats.avgDispersionSpread);
+                    return <span className={d.className}>{d.text}</span>;
+                  })()}
                 </div>
                 {maxCarry && (
                   <div className="row" style={{ marginTop: 6 }}>
-                    <span className="text-dim">🚀 Longest carry</span>
+                    <span className="text-dim">Longest carry</span>
                     <span style={{ fontWeight: 700, color: "var(--danger)" }}>
                       {maxCarry.carry} yd
                     </span>
@@ -107,7 +109,7 @@ export function ClubDetailScreen({
                           <button
                             className="btn btn-danger"
                             style={{ padding: "4px 10px" }}
-                            onClick={() => deleteSession(s.id)}
+                            onClick={() => deleteSession(s)}
                           >
                             Delete
                           </button>

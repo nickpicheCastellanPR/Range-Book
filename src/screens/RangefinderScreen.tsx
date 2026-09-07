@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { LIES, SWING_LENGTHS, type AppData, type Lie } from "../types";
 import { getRecommendations } from "../lib/recommend";
+import { formatDispersion } from "../lib/dispersionText";
 import { CompassRose } from "../components/art/CompassRose";
 
 export function RangefinderScreen({ data }: { data: AppData }) {
@@ -127,14 +128,16 @@ export function RangefinderScreen({ data }: { data: AppData }) {
               {rec.carryMargin !== undefined && (
                 <span className="text-left"> · clears by {rec.carryMargin} yd</span>
               )}
-              {rec.baseStats.avgDispersion !== 0 && (
-                <>
-                  {" · tends "}
-                  <span className={rec.baseStats.avgDispersion < 0 ? "text-left" : "text-right"}>
-                    {Math.abs(rec.baseStats.avgDispersion)} yd {rec.baseStats.avgDispersion < 0 ? "left" : "right"}
-                  </span>
-                </>
-              )}
+              {rec.baseStats.avgDispersion !== 0 &&
+                (() => {
+                  const d = formatDispersion(rec.baseStats.avgDispersion, rec.baseStats.avgDispersionSpread);
+                  return (
+                    <>
+                      {" · tends "}
+                      <span className={d.className}>{d.text}</span>
+                    </>
+                  );
+                })()}
             </div>
           </div>
         </div>

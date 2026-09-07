@@ -1,5 +1,5 @@
 import type { Club, ClubStats, RangeSession, SwingLength } from "../types";
-import { avg, round1 } from "./math";
+import { avg, round1, stdev } from "./math";
 
 export function computeClubStats(
   club: Club,
@@ -17,6 +17,7 @@ export function computeClubStats(
       avgCarry: avg(kept.map((k) => k.carry)),
       avgTotal: avg(kept.map((k) => k.total)),
       avgDispersion: avg(kept.map((k) => k.dispersion)),
+      dispersionSpread: stdev(kept.map((k) => k.dispersion)),
       date: s.date,
     };
   });
@@ -24,6 +25,7 @@ export function computeClubStats(
   const avgCarry = avg(sessionAverages.map((s) => s.avgCarry));
   const avgTotal = avg(sessionAverages.map((s) => s.avgTotal));
   const avgDispersion = avg(sessionAverages.map((s) => s.avgDispersion));
+  const avgDispersionSpread = avg(sessionAverages.map((s) => s.dispersionSpread));
   const lastUpdated = sessionAverages.reduce(
     (latest, s) => (s.date > latest ? s.date : latest),
     sessionAverages[0].date,
@@ -34,6 +36,7 @@ export function computeClubStats(
     avgTotal: round1(avgTotal),
     avgRollout: round1(avgTotal - avgCarry),
     avgDispersion: round1(avgDispersion),
+    avgDispersionSpread: round1(avgDispersionSpread),
     sessionCount: relevant.length,
     lastUpdated,
   };

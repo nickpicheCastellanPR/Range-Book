@@ -10,6 +10,7 @@ import { ClubDetailScreen } from "./screens/ClubDetailScreen";
 import { RangefinderScreen } from "./screens/RangefinderScreen";
 import { SettingsScreen } from "./screens/SettingsScreen";
 import { AboutScreen } from "./screens/AboutScreen";
+import { InstallBanner } from "./components/InstallBanner";
 
 const TITLES: Record<Screen, string> = {
   bag: "My Bag",
@@ -51,6 +52,15 @@ export default function App() {
       <WaveDivider />
 
       <main className="app-main">
+        {screen === "bag" && !openClubId && (
+          <InstallBanner
+            onLearnMore={() => {
+              setScreen("settings");
+              setShowAbout(true);
+            }}
+          />
+        )}
+
         {screen === "bag" &&
           (openClubId ? (
             <ClubDetailScreen
