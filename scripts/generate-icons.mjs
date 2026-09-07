@@ -1,12 +1,19 @@
 import sharp from "sharp";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { writeFile } from "node:fs/promises";
+import { renderIconSvg } from "./kraken-shape.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const iconsDir = path.join(__dirname, "..", "public", "icons");
 const svgPath = path.join(iconsDir, "icon.svg");
+const faviconPath = path.join(__dirname, "..", "public", "favicon.svg");
 
 async function main() {
+  const svg = renderIconSvg();
+  await writeFile(svgPath, svg);
+  await writeFile(faviconPath, svg);
+
   await sharp(svgPath).resize(192, 192).png().toFile(path.join(iconsDir, "icon-192.png"));
   await sharp(svgPath).resize(512, 512).png().toFile(path.join(iconsDir, "icon-512.png"));
 
