@@ -5,8 +5,6 @@ import { round1 } from "./math";
 export interface Conditions {
   /** target distance, already elevation/slope-adjusted if the rangefinder provides that */
   distance: number;
-  /** current temp in F; omit to skip temp adjustment */
-  tempF?: number;
   lie: Lie;
   /** yards that must be carried in the air (bunker, water, rough) — clubs that don't clear it are excluded */
   minCarry?: number;
@@ -26,7 +24,7 @@ export interface Recommendation {
   carryMargin?: number;
 }
 
-/** Adjusts a club's baseline carry/total for temperature and lie. */
+/** Adjusts a club's baseline carry/total for lie. */
 export function adjustForConditions(
   stats: ClubStats,
   conditions: Conditions,
@@ -34,13 +32,6 @@ export function adjustForConditions(
 ): { carry: number; total: number } {
   let carry = stats.avgCarry;
   let total = stats.avgTotal;
-
-  if (conditions.tempF !== undefined) {
-    const deltaF = conditions.tempF - settings.tempBaselineF;
-    const tempAdjust = (deltaF / 10) * settings.yardsPer10DegreesF;
-    carry += tempAdjust;
-    total += tempAdjust;
-  }
 
   const liePct = settings.lieAdjustments[conditions.lie] ?? 0;
   const lieFactor = 1 + liePct / 100;

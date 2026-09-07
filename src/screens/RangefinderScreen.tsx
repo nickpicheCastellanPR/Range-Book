@@ -6,23 +6,20 @@ import { CompassRose } from "../components/art/CompassRose";
 export function RangefinderScreen({ data }: { data: AppData }) {
   const [distance, setDistance] = useState("");
   const [minCarry, setMinCarry] = useState("");
-  const [tempF, setTempF] = useState("");
   const [lie, setLie] = useState<Lie>("fairway");
 
   const distanceNum = parseFloat(distance);
-  const tempNum = tempF.trim() === "" ? undefined : parseFloat(tempF);
   const minCarryNum = minCarry.trim() === "" ? undefined : parseFloat(minCarry);
 
   const recommendations = useMemo(() => {
     if (!Number.isFinite(distanceNum)) return [];
     return getRecommendations(data, {
       distance: distanceNum,
-      tempF: tempNum,
       lie,
       minCarry: minCarryNum,
     }).slice(0, 8);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [distanceNum, tempNum, minCarryNum, lie, data]);
+  }, [distanceNum, minCarryNum, lie, data]);
 
   const hazardBlocked =
     Number.isFinite(distanceNum) &&
@@ -55,15 +52,6 @@ export function RangefinderScreen({ data }: { data: AppData }) {
               placeholder="e.g. 140"
               value={minCarry}
               onChange={(e) => setMinCarry(e.target.value)}
-            />
-          </div>
-          <div className="field">
-            <label>Temp (°F, optional)</label>
-            <input
-              inputMode="decimal"
-              placeholder="e.g. 58"
-              value={tempF}
-              onChange={(e) => setTempF(e.target.value)}
             />
           </div>
           <div className="field">

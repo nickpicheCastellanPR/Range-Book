@@ -43,29 +43,6 @@ export function SettingsScreen({
   return (
     <div className="stack">
       <div className="card">
-        <div className="card-title">Temperature heuristic</div>
-        <div className="stack">
-          <div className="field">
-            <label>Baseline temp (°F)</label>
-            <input
-              type="number"
-              value={data.settings.tempBaselineF}
-              onChange={(e) => updateSettings({ tempBaselineF: Number(e.target.value) })}
-            />
-          </div>
-          <div className="field">
-            <label>Yards adjustment per 10°F from baseline</label>
-            <input
-              type="number"
-              step="0.5"
-              value={data.settings.yardsPer10DegreesF}
-              onChange={(e) => updateSettings({ yardsPer10DegreesF: Number(e.target.value) })}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="card">
         <div className="card-title">Lie adjustment (% carry)</div>
         <div className="stack">
           {LIES.map((l) => (

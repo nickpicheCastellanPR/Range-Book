@@ -53,8 +53,6 @@ export interface ClubStats {
 }
 
 export interface Settings {
-  tempBaselineF: number;
-  yardsPer10DegreesF: number;
   lieAdjustments: Record<Lie, number>;
 }
 
@@ -66,8 +64,6 @@ export interface AppData {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  tempBaselineF: 70,
-  yardsPer10DegreesF: 2,
   lieAdjustments: {
     tee: 0,
     fairway: 0,
