@@ -107,8 +107,8 @@ input:focus, select:focus {
   max-height: 70vw;
   pointer-events: none;
   opacity: 0.95;
-  -webkit-mask-image: radial-gradient(ellipse 62% 92% at 50% 100%, black 38%, transparent 82%);
-  mask-image: radial-gradient(ellipse 62% 92% at 50% 100%, black 38%, transparent 82%);
+  -webkit-mask-image: radial-gradient(ellipse 95% 100% at 50% 65%, black 72%, transparent 100%);
+  mask-image: radial-gradient(ellipse 95% 100% at 50% 65%, black 72%, transparent 100%);
 }
 
 .screen-content {
