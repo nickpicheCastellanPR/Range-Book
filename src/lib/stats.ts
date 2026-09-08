@@ -75,36 +75,41 @@ export function getMaxCarry(
   return best;
 }
 
-export interface MaxRollout {
-  rollout: number;
-  carry: number;
+export interface MaxTotal {
   total: number;
+  carry: number;
+  rollout: number;
   date: string;
 }
 
 /**
- * Longest single rollout (total - carry) ever recorded — independent of
- * which swing had the longest carry, since a hot bounce can roll a
- * merely-average strike well past a shorter one. Also pulled from raw
- * swings, not the trimmed average. This is the number that answers
- * "could this club's total distance reach a hazard beyond the target?"
+ * Longest single total distance (carry + roll) ever recorded — independent
+ * of which swing had the longest carry, since a hot bounce can carry the
+ * ball further downrange than your best-carry swing ever reached. Also
+ * pulled from raw swings, not the trimmed average. This is the number
+ * that actually answers "could this club reach a hazard beyond the
+ * target?" — carry alone or rollout alone can each understate it.
  */
-export function getMaxRollout(
+export function getMaxTotal(
   club: Club,
   swingLength: SwingLength,
   sessions: RangeSession[],
-): MaxRollout | null {
+): MaxTotal | null {
   const relevant = sessions.filter(
     (s) => s.clubId === club.id && s.swingLength === swingLength,
   );
   if (relevant.length === 0) return null;
 
-  let best: MaxRollout | null = null;
+  let best: MaxTotal | null = null;
   for (const session of relevant) {
     for (const swing of session.swings) {
-      const rollout = round1(swing.total - swing.carry);
-      if (!best || rollout > best.rollout) {
-        best = { rollout, carry: swing.carry, total: swing.total, date: session.date };
+      if (!best || swing.total > best.total) {
+        best = {
+          total: swing.total,
+          carry: swing.carry,
+          rollout: round1(swing.total - swing.carry),
+          date: session.date,
+        };
       }
     }
   }

@@ -1,5 +1,5 @@
 import { SWING_LENGTHS, type AppData, type RangeSession, type SwingLength } from "../types";
-import { computeClubStats, getMaxCarry, getMaxRollout, getSessionTrimmedAverage } from "../lib/stats";
+import { computeClubStats, getMaxCarry, getMaxTotal, getSessionTrimmedAverage } from "../lib/stats";
 import { formatDispersion } from "../lib/dispersionText";
 import { TrendChart } from "../components/TrendChart";
 import { WaveDivider } from "../components/art/WaveDivider";
@@ -37,7 +37,7 @@ export function ClubDetailScreen({
       {SWING_LENGTHS.map((sl) => {
         const stats = computeClubStats(club, sl.key as SwingLength, data.sessions);
         const maxCarry = getMaxCarry(club, sl.key as SwingLength, data.sessions);
-        const maxRollout = getMaxRollout(club, sl.key as SwingLength, data.sessions);
+        const maxTotal = getMaxTotal(club, sl.key as SwingLength, data.sessions);
         const sessions = data.sessions
           .filter((s) => s.clubId === club.id && s.swingLength === sl.key)
           .sort((a, b) => a.date.localeCompare(b.date));
@@ -82,14 +82,14 @@ export function ClubDetailScreen({
                     </span>
                   </div>
                 )}
-                {maxRollout && (
+                {maxTotal && (
                   <div className="row" style={{ marginTop: 6 }}>
-                    <span className="text-dim">Longest rollout</span>
+                    <span className="text-dim">Longest total</span>
                     <span style={{ fontWeight: 700, color: "var(--warn)" }}>
-                      {maxRollout.rollout} yd
+                      {maxTotal.total} yd
                       <span className="text-faint" style={{ fontWeight: 400 }}>
                         {" "}
-                        ({maxRollout.total} total)
+                        ({maxTotal.carry} carry + {maxTotal.rollout} roll)
                       </span>
                     </span>
                   </div>
